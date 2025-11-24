@@ -19,7 +19,7 @@ public class EventRequestDTO {
     private String description;
 
     @NotNull(message = "Event type is required")
-    private EventType type;
+    private String type;
 
     @NotBlank(message = "Location is required")
     private String location;

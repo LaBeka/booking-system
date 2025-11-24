@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.List;
 
-@RequestMapping(AuthApi.API_PATH_DICTIONARY)
-@Tag(name = "Methods to work with user", description = AuthApi.API_PATH_DICTIONARY)
+@RequestMapping(UserApi.API_PATH_DICTIONARY)
+@Tag(name = "Methods to work with user", description = UserApi.API_PATH_DICTIONARY)
 public interface UserApi {
 
     String API_PATH_DICTIONARY = "/api/user";

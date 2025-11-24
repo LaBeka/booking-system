@@ -2,8 +2,10 @@ package edu.com.bookingsystem.services;
 
 import edu.com.bookingsystem.dtos.EventRequestDTO;
 import edu.com.bookingsystem.dtos.EventResponseDTO;
+import edu.com.bookingsystem.exceptions.InvalidFieldValueException;
 import edu.com.bookingsystem.mappers.EventMapper;
 import edu.com.bookingsystem.models.event.Event;
+import edu.com.bookingsystem.models.event.EventType;
 import edu.com.bookingsystem.models.user.UserAccount;
 import edu.com.bookingsystem.repos.EventRepo;
 import edu.com.bookingsystem.repos.UserAccountRepo;
@@ -38,8 +40,15 @@ public class EventService {
 
     public EventResponseDTO createEvent(EventRequestDTO dto, String email) {
         UserAccount createdBy = getAuthorizedUser(email);//admin super
+
+        EventType type;
+        try{
+            type = EventType.valueOf(dto.getType().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new InvalidFieldValueException("Invalid grade value: '" + dto.getType().toUpperCase() + "'");
+        }
         dto.setCreatedBy(createdBy);
-        Event event = eventMapper.toEntity(dto);
+        Event event = eventMapper.toEntity(dto, type);
         eventRepo.save(event);
         return eventMapper.toDto(event);
     }

@@ -15,8 +15,8 @@ import java.security.Principal;
 import java.util.List;
 import java.util.UUID;
 
-@RequestMapping(AuthApi.API_PATH_DICTIONARY)
-@Tag(name = "Methods to work with booking", description = AuthApi.API_PATH_DICTIONARY)
+@RequestMapping(BookingAPI.API_PATH_DICTIONARY)
+@Tag(name = "Methods to work with booking", description = BookingAPI.API_PATH_DICTIONARY)
 @Validated
 public interface BookingAPI {
 
@@ -27,7 +27,7 @@ public interface BookingAPI {
     ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(Principal user);
 
     @GetMapping("/{eventId}")
-    @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Get all bookings by event id. Available for admins")
     ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(@PathVariable @NotNull(message = "Event id is mandatory") UUID eventId);
 
@@ -42,7 +42,7 @@ public interface BookingAPI {
     ResponseEntity<BookingResponseDTO> unBookEvent(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal principal);
 
     @DeleteMapping("/delete/{bookingId}")
-    @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Delete existing booking by its id. Only available for roles: admin, super admin")
     ResponseEntity<Boolean> deleteBooking(@RequestParam @NotNull(message = "Booking id is mandatory") UUID bookingId);
 }

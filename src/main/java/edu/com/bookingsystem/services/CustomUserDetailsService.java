@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,6 +23,9 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
         user.getRoles().stream().forEach(System.out::println);
+        //use these 2 lines of code for the users who has raw password "pass"
+        PasswordEncoder encoder =  new BCryptPasswordEncoder();
+        user.setPassword(encoder.encode(user.getPassword()));
         return new CustomUserDetails(user);
     }
 }

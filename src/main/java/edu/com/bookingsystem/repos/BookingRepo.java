@@ -11,9 +11,9 @@ import java.util.UUID;
 
 public interface BookingRepo extends JpaRepository<Booking, UUID> {
 
-    @Query("select b from Booking b where b.bookedBy = :user and b.event.id = :event")
+    @Query("select b from Booking b where b.bookedBy.id = :user and b.event.id = :event")
     Optional<Booking> findByUserAndEvent(@Param("user") UUID userId, @Param("event") UUID eventId);
 
-    @Query("select b from Booking b where b.bookedBy = :user")
+    @Query("select b from Booking b where b.bookedBy.id = :user")
     List<Booking> findAllByUserId(@Param("user") UUID id);
 }
