@@ -1,6 +1,5 @@
 package edu.com.bookingsystem.mappers;
 
-import edu.com.bookingsystem.dtos.BookingRequestDTO;
 import edu.com.bookingsystem.dtos.BookingResponseDTO;
 import edu.com.bookingsystem.models.Booking;
 import edu.com.bookingsystem.models.event.Event;

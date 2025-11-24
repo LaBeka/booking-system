@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 public class BookingController implements BookingAPI {
 

@@ -7,7 +7,6 @@ import edu.com.bookingsystem.dtos.EventResponseDTO;
 import edu.com.bookingsystem.services.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -15,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
 public class EventController implements EventApi {
 
