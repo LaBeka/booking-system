@@ -1,13 +1,13 @@
 package edu.com.bookingsystem.dtos;
 
 import edu.com.bookingsystem.models.event.EventType;
+import edu.com.bookingsystem.models.user.UserAccount;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 public class EventRequestDTO {
@@ -30,6 +30,5 @@ public class EventRequestDTO {
     @Min(value = 1, message = "Max participants must be at least 1")
     private int maxParticipants;
 
-    @NotNull(message = "Admin ID is required")
-    private UUID createdBy;
+    private UserAccount createdBy;
 }

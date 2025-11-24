@@ -138,6 +138,12 @@
             <scope>compile</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-core -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-core</artifactId>
+            <version>2.2.21</version>
+        </dependency>
 
     </dependencies>
 

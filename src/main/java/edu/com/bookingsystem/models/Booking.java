@@ -37,5 +37,5 @@ public class Booking {
 
     private LocalDateTime bookedOn;
 
-
+    private boolean active = true;
 }

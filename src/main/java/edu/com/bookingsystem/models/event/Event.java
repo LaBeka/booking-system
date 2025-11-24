@@ -37,6 +37,8 @@ public class Event {
     @Enumerated(EnumType.STRING)
     private EventType type;
 
+    private boolean active = true;
+    private boolean deprecated = false;
     private String location;
 
     private LocalDateTime when;
