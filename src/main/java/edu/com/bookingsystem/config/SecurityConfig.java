@@ -37,22 +37,15 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/login").permitAll()
-                        .requestMatchers("/register/**").permitAll()
-                        .requestMatchers("/admin/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/students/history/**").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/students/allStudents").hasAnyRole("ADMIN","TEACHER","STUDENT")
-                        .requestMatchers("/courses/**").authenticated()
-                )
-                .oauth2Login(oauth -> oauth
-                        .defaultSuccessUrl("/auth/google/success", true)
+                        .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/event/all").permitAll()
+                        .requestMatchers("/api/user").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
-    ///admin /courses /enrollment /grade /public /students /teacher ,"TEACHER"
-
 
 }
 

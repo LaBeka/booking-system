@@ -41,6 +41,7 @@ public class Event {
     private boolean deprecated = false;
     private String location;
 
+    @Column(name = "when_time")
     private LocalDateTime when;
 
     @ManyToOne

@@ -19,7 +19,7 @@ import java.util.UUID;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "user_accounts")
 public class UserAccount {
 
     @Id
@@ -48,6 +48,6 @@ public class UserAccount {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "bookedBy")
     private List<Booking> bookings;
 }

@@ -26,11 +26,11 @@ public class BookingService {
     private final BookingRepo bookingRepo;
     private final BookingMapper bookingMapper;
     private final EventRepo eventRepo;
-    private final UserAccountRepo userRepo;
+    private final UserAccountRepo userAccountRepo;
 
 
     private UserAccount getAuthorizedUser(String email) {
-        return userRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Logged User not found"));
+        return userAccountRepo.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Logged User not found"));
     }
 
     private Event getExistingEventById(UUID eventId) {

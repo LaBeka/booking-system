@@ -35,7 +35,6 @@ public class JwtFilter extends OncePerRequestFilter {
             try {
                 String token = header.substring(7);
                 Claims claims = jwtUtil.extractClaims(token);
-//                String role =  claims.get("role", String.class);
                 List<String> roles = claims.get("roles", List.class);
                 List<SimpleGrantedAuthority> authorities =
                         roles.stream()

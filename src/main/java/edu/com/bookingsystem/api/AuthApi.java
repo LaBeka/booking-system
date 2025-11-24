@@ -37,6 +37,6 @@ public interface AuthApi {
     @PostMapping("/login")
     @Operation(summary = "Create token for authentication to log in")
     ResponseEntity<?> createAuthToken(
-            @Valid @RequestParam @NotEmpty(message = "Email is mandatory")String email,
-            @Valid @RequestParam @NotEmpty(message = "Password is mandatory") String password);
+            @RequestParam @NotEmpty(message = "Email is mandatory")String email,
+            @RequestParam @NotEmpty(message = "Password is mandatory") String password);
 }

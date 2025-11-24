@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Component
 public class JwtUtil {
 
-
     private final String secret = "supersecretkey123456789abcdcdcdcdcdcdcdcdcdcd";
 
     public String generateToken(UserAccount user) {

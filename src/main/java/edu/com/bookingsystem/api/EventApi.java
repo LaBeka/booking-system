@@ -23,7 +23,7 @@ public interface EventApi {
 
     String API_PATH_DICTIONARY = "/api/event";
 
-    @GetMapping("/")
+    @GetMapping("/all")
     @Operation(summary = "get all events. Available for all roles:")
     public ResponseEntity<List<EventResponseDTO>> getList();
 
@@ -37,10 +37,10 @@ public interface EventApi {
     @PutMapping("/update/{eventId}")
     @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
     @Operation(summary = "Update existing event. Only available for roles: admin, super admin")
-    public ResponseEntity<EventResponseDTO> updateEvent(@Valid @RequestParam @NotNull(message = "event id is mandatory") UUID eventId, @Valid @RequestBody EventRequestDTO dto, Principal principal);
+    public ResponseEntity<EventResponseDTO> updateEvent(@RequestParam @NotNull(message = "event id is mandatory") UUID eventId, @Valid @RequestBody EventRequestDTO dto, Principal principal);
 
     @DeleteMapping("/delete/{eventId}")
     @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
     @Operation(summary = "Delete existing event. Only available for roles: admin, super admin")
-    public ResponseEntity<Boolean> deleteEvent(@Valid @RequestParam @NotNull(message = "event id is mandatory") UUID eventId, Principal principal);
+    public ResponseEntity<Boolean> deleteEvent(@RequestParam @NotNull(message = "event id is mandatory") UUID eventId, Principal principal);
 }

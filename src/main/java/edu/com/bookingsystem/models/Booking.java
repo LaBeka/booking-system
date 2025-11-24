@@ -30,11 +30,14 @@ public class Booking {
     private UUID id;
 
     @ManyToOne
+    @JoinColumn(name = "booked_by", nullable = false)
     private UserAccount bookedBy;
 
     @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @JoinColumn(name = "booked_on", nullable = false)
     private LocalDateTime bookedOn;
 
     private boolean active = true;

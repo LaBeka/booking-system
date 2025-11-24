@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Entity
-@Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "roles")
 public class Role {
 
     @Id
@@ -19,3 +19,4 @@ public class Role {
     @Column(unique = true, nullable = false)
     private String name; // super ADMIN, STUDENT, TEACHER
 }
+

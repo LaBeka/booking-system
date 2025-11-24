@@ -29,20 +29,20 @@ public interface BookingAPI {
     @GetMapping("/{eventId}")
     @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
     @Operation(summary = "Get all bookings by event id. Available for admins")
-    ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(@Valid @PathVariable @NotNull(message = "Event id is mandatory") UUID eventId);
+    ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(@PathVariable @NotNull(message = "Event id is mandatory") UUID eventId);
 
     @PostMapping("/{eventId}")
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Book the event. Available for users only")
-    ResponseEntity<BookingResponseDTO> bookEvent(@Valid @PathVariable @NotNull(message = "Event id is mandatory") UUID eventId, Principal principal);
+    ResponseEntity<BookingResponseDTO> bookEvent(@PathVariable @NotNull(message = "Event id is mandatory") UUID eventId, Principal principal);
 
     @PutMapping("/unbook/{bookingId}")
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Book the event. Available for users")
-    ResponseEntity<BookingResponseDTO> unBookEvent(@Valid @PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal principal);
+    ResponseEntity<BookingResponseDTO> unBookEvent(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal principal);
 
     @DeleteMapping("/delete/{bookingId}")
     @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
     @Operation(summary = "Delete existing booking by its id. Only available for roles: admin, super admin")
-    ResponseEntity<Boolean> deleteBooking(@Valid @RequestParam @NotNull(message = "Booking id is mandatory") UUID bookingId);
+    ResponseEntity<Boolean> deleteBooking(@RequestParam @NotNull(message = "Booking id is mandatory") UUID bookingId);
 }
