@@ -20,15 +20,15 @@ public interface AuthApi {
 
     @PostMapping("/register/user")
     @Operation(summary = "Registration new user with roles: user")
-    public ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO dto, Principal principal);
+    ResponseEntity<UserResponseDTO> registerUser(@RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/register/super_admin")
     @Operation(summary = "Registration new user with roles: user, admin, super admin")
-    public ResponseEntity<UserResponseDTO> registerSuperAdmin(@RequestBody UserRequestDTO dto, Principal principal);
+    ResponseEntity<UserResponseDTO> registerSuperAdmin(@RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/register/admin")
     @Operation(summary = "Registration new user with roles: user and admin")
-    public ResponseEntity<UserResponseDTO> registerAdmin(@RequestBody UserRequestDTO dto, Principal principal);
+    ResponseEntity<UserResponseDTO> registerAdmin(@RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/getAuth")
     @Operation(summary = "Create token for authentication")

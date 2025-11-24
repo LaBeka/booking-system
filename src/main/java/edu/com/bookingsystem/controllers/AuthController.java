@@ -36,6 +36,7 @@ public class AuthController implements AuthApi {
 
     }
 
+    // TODO createAuthToken
     @Override
     public ResponseEntity<?> createAuthToken(String email, String password) {
         return null;

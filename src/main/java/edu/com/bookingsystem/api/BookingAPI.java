@@ -5,6 +5,7 @@ import edu.com.bookingsystem.dtos.BookingResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
@@ -22,18 +23,22 @@ public interface BookingAPI {
     ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(Principal user);
 
     @GetMapping("/{eventId}")
+    @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
     @Operation(summary = "Get all bookings by event id. Available for admins")
-    ResponseEntity<List<BookingResponseDTO>> getAllBookingForAdminByEventid(@PathVariable UUID eventId, Principal user);
+    ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(@PathVariable UUID eventId);
 
     @PostMapping("/{eventId}")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Book the event. Available for users only")
     ResponseEntity<BookingResponseDTO> bookEvent(@PathVariable UUID eventId, Principal principal);
 
     @PutMapping("/unbook/{bookingId}")
+    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Book the event. Available for users")
     ResponseEntity<BookingResponseDTO> unBookEvent(@PathVariable UUID bookingId, Principal principal);
 
     @DeleteMapping("/delete/{bookingId}")
+    @PreAuthorize("hasRole('ADMIN' || 'SUPER_ADMIN')")
     @Operation(summary = "Delete existing booking by its id. Only available for roles: admin, super admin")
-    ResponseEntity<Boolean> deleteBooking(@RequestParam UUID bookingId, Principal principal);
+    ResponseEntity<Boolean> deleteBooking(@RequestParam UUID bookingId);
 }

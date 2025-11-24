@@ -13,11 +13,9 @@ import edu.com.bookingsystem.repos.UserUpdateRepo;
 import jakarta.persistence.EntityExistsException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
@@ -37,7 +35,6 @@ public class AuthService {
 
         userRepository.findByEmail(dto.getEmail())
                 .ifPresent(u -> { throw new EntityExistsException("User with the email already exists"); });
-
 
         Set<Role> roles = roleName.stream()
                 .map(r -> roleRepo.findByName(r.toUpperCase())
@@ -82,42 +79,21 @@ public class AuthService {
         return userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Logged ADMIN not found"));
     }
 
-    public List<UserResponseDTO> getAllUser(String email) {
-        UserAccount user = getAuthorizedUser(email);
-        boolean hasUserRole = user.getRoles().stream()
-                .anyMatch(role -> role.getName().equalsIgnoreCase("USER"));
-        if (!hasUserRole) {
-            throw new UnauthorizedException("User does not have required role: USER to get list of users");
-        }
-
+    public List<UserResponseDTO> getAllUser() {
         List<UserAccount> list = userRepository.getAllByRoles("USER");
         return list.stream()
                 .map(userMapper::toResponseDTO)
                 .toList();
     }
 
-    public List<UserResponseDTO> getAllAdmin(String email) {
-        UserAccount admin = getAuthorizedUser(email);
-        boolean hasUserRole = admin.getRoles().stream()
-                .anyMatch(role -> role.getName().equalsIgnoreCase("ADMIN"));
-        if (!hasUserRole) {
-            throw new UnauthorizedException("User does not have required role: ADMIN to get list of admins");
-        }
-
+    public List<UserResponseDTO> getAllAdmin(){
         List<UserAccount> list = userRepository.getAllByRoles("ADMIN");
         return list.stream()
                 .map(userMapper::toResponseDTO)
                 .toList();
     }
 
-    public List<UserResponseDTO> getAllSuperAdmin(String email) {
-        UserAccount admin = getAuthorizedUser(email);
-        boolean hasUserRole = admin.getRoles().stream()
-                .anyMatch(role -> role.getName().equalsIgnoreCase("SUPER_ADMIN"));
-        if (!hasUserRole) {
-            throw new UnauthorizedException("User does not have required role: SUPER ADMIN to get list of super admins");
-        }
-
+    public List<UserResponseDTO> getAllSuperAdmin(){
         List<UserAccount> list = userRepository.getAllByRoles("SUPER_ADMIN");
         return list.stream()
                 .map(userMapper::toResponseDTO)

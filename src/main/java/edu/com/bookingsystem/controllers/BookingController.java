@@ -26,8 +26,8 @@ public class BookingController implements BookingAPI {
     }
 
     @Override
-    public ResponseEntity<List<BookingResponseDTO>> getAllBookingForAdminByEventid(UUID eventId, Principal user) {
-        List<BookingResponseDTO> response = bookingService.getListByEventId(eventId, user);
+    public ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(UUID eventId) {
+        List<BookingResponseDTO> response = bookingService.getListByEventId(eventId);
         return ResponseEntity.ok(response);
     }
 
@@ -44,8 +44,8 @@ public class BookingController implements BookingAPI {
     }
 
     @Override
-    public ResponseEntity<Boolean> deleteBooking(UUID bookingId, Principal user) {
-        Boolean response = bookingService.deleteBooking(bookingId, user);
+    public ResponseEntity<Boolean> deleteBooking(UUID bookingId) {
+        Boolean response = bookingService.deleteBooking(bookingId);
         return ResponseEntity.ok(response);
     }
 }

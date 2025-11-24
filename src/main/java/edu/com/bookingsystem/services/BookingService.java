@@ -50,8 +50,7 @@ public class BookingService {
     }
 
     //only admins TODO check if i can do this? event.getBookings()
-    public List<BookingResponseDTO> getListByEventId(UUID eventId, Principal user) {
-//        UserAccount userAccount = getAuthorizedUser(user.getName());
+    public List<BookingResponseDTO> getListByEventId(UUID eventId) {
         Event event = getExistingEventById(eventId);
         List<Booking> bookings = event.getBookings();
 //        List<Booking> list = bookingRepo.getAllByEvent(event.getId());
@@ -89,18 +88,12 @@ public class BookingService {
     }
 
     //only admins
-    public Boolean deleteBooking(UUID bookingId, Principal user) {
-        UserAccount userAccount = getAuthorizedUser(user.getName());
+    public Boolean deleteBooking(UUID bookingId) {
         Optional<Booking> booking = bookingRepo.findById(bookingId);
         if (booking.isEmpty()) {
             throw new EntityNotFoundException("Booking does not exist");
         }
 
-        boolean hasUserRole = userAccount.getRoles().stream()
-                .anyMatch(role -> role.getName().equalsIgnoreCase("ADMIN"));
-        if (!hasUserRole) {
-            throw new UnauthorizedException("User does not have required role: ADMIN to delete booking");
-        }
         bookingRepo.delete(booking.get());
         return true;
     }

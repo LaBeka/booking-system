@@ -62,6 +62,7 @@ public class EventService {
         UserAccount authUser = getAuthorizedUser(email);//admin super
 
         Event existingEvent = getExistingEventById(eventId);
+        existingEvent.setCreatedBy(authUser);
         existingEvent.setActive(false);
         existingEvent.setDeprecated(true);
         return !existingEvent.isActive() && existingEvent.isDeprecated();
