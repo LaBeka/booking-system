@@ -5,6 +5,7 @@ import edu.com.bookingsystem.dtos.user.UserResponseDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,10 +29,12 @@ public interface AuthApi {
 
     @PostMapping("/register/super_admin")
     @Operation(summary = "Registration new user with roles: user, admin, super admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('USER')")
     ResponseEntity<UserResponseDTO> registerSuperAdmin(@Valid @RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/register/admin")
     @Operation(summary = "Registration new user with roles: user and admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('USER')")
     ResponseEntity<UserResponseDTO> registerAdmin(@Valid @RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/login")

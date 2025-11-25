@@ -25,22 +25,22 @@ public interface EventApi {
 
     @GetMapping("/all")
     @Operation(summary = "get all events. Available for all roles:")
-    public ResponseEntity<List<EventResponseDTO>> getList();
+    ResponseEntity<List<EventResponseDTO>> getList();
 
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Create new event. Only available for roles: admin, super admin")
-    public ResponseEntity<EventResponseDTO> createEvent(@Valid @RequestBody EventRequestDTO dto, Principal principal);
+    ResponseEntity<EventResponseDTO> createEvent(@Valid @RequestBody EventRequestDTO dto, Principal principal);
 
     // need principal for the field  createdBy/updatedBy
 
     @PutMapping("/update/{eventId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Update existing event. Only available for roles: admin, super admin")
-    public ResponseEntity<EventResponseDTO> updateEvent(@RequestParam @NotNull(message = "event id is mandatory") UUID eventId, @Valid @RequestBody EventRequestDTO dto, Principal principal);
+    ResponseEntity<EventResponseDTO> updateEvent(@RequestParam @NotNull(message = "event id is mandatory") UUID eventId, @Valid @RequestBody EventRequestDTO dto, Principal principal);
 
     @DeleteMapping("/delete/{eventId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Delete existing event. Only available for roles: admin, super admin")
-    public ResponseEntity<Boolean> deleteEvent(@RequestParam @NotNull(message = "event id is mandatory") UUID eventId, Principal principal);
+    ResponseEntity<Boolean> deleteEvent(@RequestParam @NotNull(message = "event id is mandatory") UUID eventId, Principal principal);
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,13 +46,13 @@ public class AuthService {
                 dto,
                 encoder
         );
-        createHistoryRecord(user, roleName.get(0), admin);
-
         UserAccount saved = userRepository.save(user);
+        Optional<UserUpdate> update = createHistoryRecord(saved, roleName.get(0), admin);
+
         return  userMapper.toResponseDTO(saved);
     }
 
-    private void createHistoryRecord(UserAccount user, String role, UserAccount updatedBy) {
+    private Optional<UserUpdate> createHistoryRecord(UserAccount user, String role, UserAccount updatedBy) {
 
         UserUpdate updateUser = UserUpdate.builder()
                 .theUser(user)
@@ -71,8 +72,8 @@ public class AuthService {
                 updateUser.setComment( "Initial super admin registration");
             }
         }
-        userUpdateRepo.save(updateUser);
-
+        Optional<UserUpdate> saveUpdate = Optional.of(userUpdateRepo.save(updateUser));
+        return saveUpdate;
     }
 
     private UserAccount getAuthorizedUser(String email) {

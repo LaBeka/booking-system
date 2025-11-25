@@ -12,7 +12,7 @@ public interface BookingMapper {
 
     // Create booking from request: we ignore associations (set in service)
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "active", ignore = true)
+    @Mapping(target = "active", constant = "true")
     @Mapping(target = "bookedBy", source = "bookedBy")
     @Mapping(target = "event", source = "event")
     @Mapping(target = "bookedOn", expression = "java(java.time.LocalDateTime.now())")

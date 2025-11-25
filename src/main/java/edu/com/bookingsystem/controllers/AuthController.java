@@ -14,6 +14,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
@@ -25,11 +27,12 @@ public class AuthController implements AuthApi {
 
     private final AuthService authService;
     private final AuthenticationManager authenticationManager;
+    private final UserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
 
     @Override
     public ResponseEntity<UserResponseDTO> registerUser(UserRequestDTO dto, Principal principal) {
-        return ResponseEntity.ok(authService.register(dto, List.of("USER"), principal.getName()));
+        return ResponseEntity.ok(authService.register(dto, List.of("USER"), "admin2@school.com"));
     }
 
     @Override
@@ -45,17 +48,33 @@ public class AuthController implements AuthApi {
     }
 
     // TODO createAuthToken
-    @Override
-    public ResponseEntity<String> createAuthToken(String email, String password) {
-        Authentication auth = null;
-        try {
-            auth = authenticationManager.authenticate(new
-                    UsernamePasswordAuthenticationToken(email, password));
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
-        }
-        UserAccount user  = ((CustomUserDetails) auth.getPrincipal()).getUser();
+//    @Override
+//    public ResponseEntity<String> createAuthToken(String email, String password) {
+//        Authentication auth = null;
+//        try {
+//            auth = authenticationManager.authenticate(new
+//                    UsernamePasswordAuthenticationToken(email, password));
+//        } catch (AuthenticationException e) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+//        }
+//        UserAccount user  = ((CustomUserDetails) auth.getPrincipal()).getUser();
+//
+//        return ResponseEntity.status(HttpStatus.OK).body(jwtUtil.generateToken(user));
+//    }
 
-        return ResponseEntity.status(HttpStatus.OK).body(jwtUtil.generateToken(user));
-    }
+        @Override
+        public ResponseEntity<String> createAuthToken(String email, String password) {
+            Authentication auth = null;
+            try {
+                auth = authenticationManager.authenticate(
+                        new UsernamePasswordAuthenticationToken(email, password));
+            } catch (AuthenticationException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
+            }
+            UserDetails user = userDetailsService.loadUserByUsername(auth.getName());
+
+            String token = jwtUtil.generateToken(user);
+
+            return ResponseEntity.ok(token);
+        }
 }

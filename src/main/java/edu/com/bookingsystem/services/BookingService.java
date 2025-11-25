@@ -77,7 +77,7 @@ public class BookingService {
         UserAccount userAccount = getAuthorizedUser(user.getName());
         Optional<Booking> booking = bookingRepo.findById(bookingId);
         if (booking.isEmpty() || !booking.get().isActive()) {
-            throw new EntityNotFoundException("Booking does not exist or it is already unbooked");
+            throw new EntityNotFoundException("Booking is already unbooked");
         }
         if(userAccount.getId() != booking.get().getBookedBy().getId()) {
             throw new UnauthorizedException("Users can only unbook their own bookings");

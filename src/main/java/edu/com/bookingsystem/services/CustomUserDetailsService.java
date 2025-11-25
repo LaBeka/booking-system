@@ -1,6 +1,7 @@
 package edu.com.bookingsystem.services;
 
-import edu.com.bookingsystem.models.user.CustomUserDetails;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import edu.com.bookingsystem.models.user.UserAccount;
 import edu.com.bookingsystem.repos.UserAccountRepo;
 import lombok.RequiredArgsConstructor;
@@ -22,10 +23,15 @@ public class CustomUserDetailsService implements UserDetailsService {
         UserAccount user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        user.getRoles().stream().forEach(System.out::println);
-        //use these 2 lines of code for the users who has raw password "pass"
-        PasswordEncoder encoder =  new BCryptPasswordEncoder();
-        user.setPassword(encoder.encode(user.getPassword()));
-        return new CustomUserDetails(user);
+        user.getRoles().stream().forEach(g-> System.out.println(g.getName()));
+
+
+        User userdetails = new User(user.getEmail(),
+                user.getPassword(),
+                user.getRoles()
+                        .stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getName()))
+                        .toList());
+        return userdetails;
     }
 }

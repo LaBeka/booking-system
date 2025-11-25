@@ -1,17 +1,15 @@
 package edu.com.bookingsystem.config;
 
 
-import edu.com.bookingsystem.models.user.Role;
-import edu.com.bookingsystem.models.user.UserAccount;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 
 @Component
@@ -19,24 +17,37 @@ public class JwtUtil {
 
     private final String secret = "supersecretkey123456789abcdcdcdcdcdcdcdcdcdcd";
 
-    public String generateToken(UserAccount user) {
-        List<String> rawRoles = user.getRoles().stream()
-                .map(Role::getName)
-                .toList();
+    public String generateToken(UserDetails user) {
+        Map<String,Object> claims = new HashMap<>();
 
-        Set<String> roles = rawRoles.stream().map(ga -> ga.replace("ROLE_", "")).collect(Collectors.toSet());
-        return Jwts.builder()
-                .setSubject(user.getEmail())
-                .claim("roles", roles)
+        claims.put("roles", user
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList());
+
+        String compact = Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 864000000))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 150))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
-
+        return compact;
     }
 
-    public Claims extractClaims(String token) {
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
+    public Claims extractAllClaims(String token) {
+        Claims body = Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secret.getBytes()))
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return body;
+    }
+    public String extractUserName(String token){
+        return extractAllClaims(token).getSubject();
     }
 
+    public List<String>  extractRoles(String token){
+        return extractAllClaims(token).get("roles", List.class);
+    }
 }
