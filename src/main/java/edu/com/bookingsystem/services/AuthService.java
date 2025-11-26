@@ -102,14 +102,13 @@ public class AuthService {
     }
 
     public UserAccount findOrCreateByEmail(String email, String name) {
-        UserAccount admin = getAuthorizedUser("admin1@school.com");
+        UserAccount admin = getAuthorizedUser("admin1@school.com"); // STATIC ADMIN_CRETED_BY
 
         Set<Role> userRole = roleRepo.findAll().stream()
                 .filter(role -> role.getName().equalsIgnoreCase("user"))
                 .collect(Collectors.toSet());
 
         Optional<UserAccount> user = userRepository.findByEmail(email);
-        UserAccount saved = null;
         if(user.isEmpty()) {
             UserAccount u = UserAccount.builder()
                     .fullName(name)
@@ -120,10 +119,9 @@ public class AuthService {
                     .authProvider(AuthProvider.GOOGLE)
                     .roles(userRole)
                     .build();
-            saved = userRepository.save(u);
+            UserAccount saved = userRepository.save(u);
             Optional<UserUpdate> update = createHistoryRecord(saved, "USER", admin);
         }
-        saved = user.get();
-        return saved;
+        return user.get();
     }
 }

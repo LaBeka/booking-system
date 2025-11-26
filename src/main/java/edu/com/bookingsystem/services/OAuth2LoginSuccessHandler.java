@@ -56,9 +56,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             String name = defaultUser.getAttribute("name");
             // Lookup or save UserAccount by email here
             user = userAccountService.findOrCreateByEmail(email, name);
-        } else if (principal instanceof UserDetails userDetails) {
-            // Optional: handle UserDetails principal
-            // This can be used in non-OAuth flows
         } else {
             throw new IllegalStateException("Unknown principal type: " + principal.getClass());
         }
@@ -73,7 +70,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .build();
         String token = jwtUtil.generateToken(userDetails);
 
-        // Example: return JWT as JSON
+        // return JWT as JSON "token": "..."
         response.setContentType("application/json");
         response.getWriter().write("""
             { "token": "%s" }
