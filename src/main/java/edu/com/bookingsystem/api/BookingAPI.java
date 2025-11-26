@@ -44,5 +44,5 @@ public interface BookingAPI {
     @DeleteMapping("/delete/{bookingId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     @Operation(summary = "Delete existing booking by its id. Only available for roles: admin, super admin")
-    ResponseEntity<Boolean> deleteBooking(@RequestParam @NotNull(message = "Booking id is mandatory") UUID bookingId);
+    ResponseEntity<Boolean> deleteBooking(@PathVariable  @NotNull(message = "Booking id is mandatory") UUID bookingId);
 }
