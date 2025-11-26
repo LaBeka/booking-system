@@ -2,6 +2,7 @@ package edu.com.bookingsystem.models.user;
 
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,13 +23,16 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
+                .map(role ->new SimpleGrantedAuthority(role.getName().replaceFirst("^ROLE_", "")))
                 .toList();
     }
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        if(user.getAuthProvider().equals(AuthProvider.LOCAL)){
+            return user.getPassword();
+        }
+        return null;
     }
 
     @Override

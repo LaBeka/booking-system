@@ -2,8 +2,8 @@ package edu.com.bookingsystem.services;
 
 import edu.com.bookingsystem.dtos.user.UserRequestDTO;
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
-import edu.com.bookingsystem.exceptions.UnauthorizedException;
 import edu.com.bookingsystem.mappers.UserMapper;
+import edu.com.bookingsystem.models.user.AuthProvider;
 import edu.com.bookingsystem.models.user.Role;
 import edu.com.bookingsystem.models.user.UserAccount;
 import edu.com.bookingsystem.models.user.UserUpdate;
@@ -99,5 +99,31 @@ public class AuthService {
         return list.stream()
                 .map(userMapper::toResponseDTO)
                 .toList();
+    }
+
+    public UserAccount findOrCreateByEmail(String email, String name) {
+        UserAccount admin = getAuthorizedUser("admin1@school.com");
+
+        Set<Role> userRole = roleRepo.findAll().stream()
+                .filter(role -> role.getName().equalsIgnoreCase("user"))
+                .collect(Collectors.toSet());
+
+        Optional<UserAccount> user = userRepository.findByEmail(email);
+        UserAccount saved = null;
+        if(user.isEmpty()) {
+            UserAccount u = UserAccount.builder()
+                    .fullName(name)
+                    .email(email)
+                    .password(encoder.encode("pass"))
+                    .active(true)
+                    .deprecated(false)
+                    .authProvider(AuthProvider.GOOGLE)
+                    .roles(userRole)
+                    .build();
+            saved = userRepository.save(u);
+            Optional<UserUpdate> update = createHistoryRecord(saved, "USER", admin);
+        }
+        saved = user.get();
+        return saved;
     }
 }

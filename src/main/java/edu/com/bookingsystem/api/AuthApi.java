@@ -6,18 +6,16 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
 @RequestMapping(AuthApi.API_PATH_DICTIONARY)
-@Tag(name = "Methods to work with authentication", description = AuthApi.API_PATH_DICTIONARY)
+@Tag(name = "Methods to work with AUTHENTICATION", description = AuthApi.API_PATH_DICTIONARY)
 @Validated
 public interface AuthApi {
 
@@ -38,8 +36,9 @@ public interface AuthApi {
     ResponseEntity<UserResponseDTO> registerAdmin(@Valid @RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/login")
-    @Operation(summary = "Create token for authentication to log in")
+    @Operation(summary = "Create token for authentication to log in. NO ROLE REQUIRED")
     ResponseEntity<?> createAuthToken(
             @RequestParam @NotEmpty(message = "Email is mandatory")String email,
             @RequestParam @NotEmpty(message = "Password is mandatory") String password);
+
 }

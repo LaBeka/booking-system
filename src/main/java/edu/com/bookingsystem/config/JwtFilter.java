@@ -35,6 +35,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 String token = header.substring(7).trim();
+
                 String username = jwtUtil.extractUserName(token);
                 List<String> roles = jwtUtil.extractRoles(token);
                 List<SimpleGrantedAuthority> authorities = roles.stream()
@@ -46,7 +47,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
             }catch (Exception e)
             {
-                System.out.println("=======================================================Invalid JWT → " + e.getMessage());
+                System.out.println("Invalid JWT → " + e.getMessage());
                 return;
             }
         }

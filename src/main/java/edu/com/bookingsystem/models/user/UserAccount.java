@@ -41,6 +41,9 @@ public class UserAccount {
     private boolean active = true;
     private boolean deprecated = false;
 
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider; // GOOGLE, LOCAL, etc.
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",

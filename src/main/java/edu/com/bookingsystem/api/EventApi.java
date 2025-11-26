@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.UUID;
 
 @RequestMapping(EventApi.API_PATH_DICTIONARY)
-@Tag(name = "Methods to work with event", description = EventApi.API_PATH_DICTIONARY)
+@Tag(name = "Methods to work with EVENT", description = EventApi.API_PATH_DICTIONARY)
 @Validated
 public interface EventApi {
 
     String API_PATH_DICTIONARY = "/api/event";
 
     @GetMapping("/all")
-    @Operation(summary = "get all events. Available for all roles:")
+    @Operation(summary = "get all events. NO ROLES REQUIRED")
     ResponseEntity<List<EventResponseDTO>> getList();
 
     @PostMapping("/create")

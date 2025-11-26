@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequestMapping(BookingAPI.API_PATH_DICTIONARY)
-@Tag(name = "Methods to work with booking", description = BookingAPI.API_PATH_DICTIONARY)
+@Tag(name = "Methods to work with BOOKING", description = BookingAPI.API_PATH_DICTIONARY)
 @Validated
 public interface BookingAPI {
 

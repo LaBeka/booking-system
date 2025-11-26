@@ -1,0 +1,25 @@
+The flow of authentication:
+
+1. http://localhost:8200/ -> response.sendRedirect("/oauth2/authorization/google"); -> User clicks “Login with Google”.
+
+2. Frontend/browser is redirected to Google, user consents.
+
+3. Google redirects back to your backend with a code; Spring Security completes OAuth2 login and gives you an OAuth2User (or OidcUser) with email.
+OAuth2LoginSuccessHandler.onAuthenticationSuccess(reads the user from db if it exists or creates a new one & sends back the token
+http://localhost:8200/login/oauth2/code/google?state=......email+profile+https... userinfo.profile+openid&authuser=0&prompt=none) read point 4
+
+4. In a custom OAuth2 success handler / custom OAuth2UserService:
+
+    Check if a local User exists by email.
+
+    If not, create and save a new User row (first login).
+
+    Build a Spring Security UserDetails (or your custom implementation) from that local user.
+
+    Generate a JWT for your own API (subject = email, roles, userId, etc.).
+
+5. Send the JWT to the client (e.g. in redirect URL, or in a JSON response for SPA).
+
+6. For all subsequent API calls, the client sends Authorization: Bearer <jwt>.
+
+7. A JWT filter validates the token and uses UserDetailsService.loadUserByUsername(email) to load your local user and set the Authentication in the security context.
