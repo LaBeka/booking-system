@@ -1,7 +1,5 @@
 package edu.com.bookingsystem.dtos;
 
-import edu.com.bookingsystem.models.event.EventType;
-import edu.com.bookingsystem.models.user.UserAccount;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -30,5 +28,4 @@ public class EventRequestDTO {
     @Min(value = 1, message = "Max participants must be at least 1")
     private int maxParticipants;
 
-    private UserAccount createdBy;
 }

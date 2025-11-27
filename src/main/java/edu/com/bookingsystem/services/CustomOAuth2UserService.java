@@ -23,6 +23,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserAccountRepo userAccountRepo;
     private final RoleRepo roleRepo;
 
+    //This tells Spring: “This is the authenticated principal for the session.”
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);

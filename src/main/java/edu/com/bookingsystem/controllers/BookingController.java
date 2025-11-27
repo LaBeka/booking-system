@@ -25,6 +25,24 @@ public class BookingController implements BookingAPI {
     }
 
     @Override
+    public ResponseEntity<List<BookingResponseDTO>> getOwnUpcomingBookings(Principal user) {
+        List<BookingResponseDTO> response = bookingService.getUpcomingBookings(user);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<List<BookingResponseDTO>> getOwnPastBookings(Principal user) {
+        List<BookingResponseDTO> response = bookingService.getPastBookings(user);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<BookingResponseDTO> getOwnBookingById(UUID bookingId, Principal user) {
+        BookingResponseDTO response = bookingService.getBookingById(bookingId, user);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
     public ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(UUID eventId) {
         List<BookingResponseDTO> response = bookingService.getListByEventId(eventId);
         return ResponseEntity.ok(response);

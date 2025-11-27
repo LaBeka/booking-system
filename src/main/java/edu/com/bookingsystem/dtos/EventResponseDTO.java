@@ -16,6 +16,8 @@ public class EventResponseDTO {
     private String title;
     private String description;
     private EventType type;
+    private boolean active;
+    private boolean deprecated;
     private String location;
     private LocalDateTime when;
     private int maxParticipants;

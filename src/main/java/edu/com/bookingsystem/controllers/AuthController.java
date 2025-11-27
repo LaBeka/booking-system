@@ -2,11 +2,17 @@ package edu.com.bookingsystem.controllers;
 
 import edu.com.bookingsystem.api.AuthApi;
 import edu.com.bookingsystem.config.JwtUtil;
+import edu.com.bookingsystem.dtos.user.JwtDTO;
 import edu.com.bookingsystem.dtos.user.UserRequestDTO;
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
+import edu.com.bookingsystem.models.user.Role;
+import edu.com.bookingsystem.models.user.UserAccount;
+import edu.com.bookingsystem.repos.JwtTokenRepo;
 import edu.com.bookingsystem.repos.UserAccountRepo;
 import edu.com.bookingsystem.services.AuthService;
 import edu.com.bookingsystem.services.CustomUserDetailsService;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,10 +33,11 @@ public class AuthController implements AuthApi {
 
     private final AuthService authService;
     private final JwtUtil jwtUtil;
-    private final UserAccountRepo userRepo;
-    private final PasswordEncoder encoder;
     private final CustomUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
+    private final UserAccountRepo userAccountRepo;
+    private final JwtTokenRepo  jwtTokenRepo;
+
 
 
     @Override
@@ -50,6 +57,7 @@ public class AuthController implements AuthApi {
 
     }
 
+    //only for non oauth2 login works
     @Override
     public ResponseEntity<String> createAuthToken(String email, String password) {
         Authentication auth = null;
@@ -64,5 +72,30 @@ public class AuthController implements AuthApi {
         String token = jwtUtil.generateToken(user);
 
         return ResponseEntity.ok(token);
+    }
+
+    @Override
+    public ResponseEntity<?> refreshAuthToken(String refreshToken) {
+        Claims claims;
+        try{
+            claims = jwtUtil.extractAllClaims(refreshToken);
+        } catch (Exception e) {
+            return ResponseEntity.status(403).body("Invalid refresh token");
+        }
+        String username = claims.getSubject();
+
+        UserAccount user = userAccountRepo.findByEmail(username).orElseThrow(() -> new RuntimeException("User not found"));
+        String userRefreshToken = jwtTokenRepo
+                .getByEmail(user.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"))
+                .getRefreshToken();
+
+        if (!refreshToken.equals(userRefreshToken)){
+            return ResponseEntity.status(403).body("Invalid refresh token");
+        }
+        UserDetails userDetails = CustomUserDetails.builder().user(user).build();
+        String newAccessToken = jwtUtil.generateToken(userDetails);
+
+        return ResponseEntity.ok(new JwtDTO(newAccessToken, refreshToken));
     }
 }

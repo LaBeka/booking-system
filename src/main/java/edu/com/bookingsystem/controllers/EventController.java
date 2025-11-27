@@ -42,4 +42,16 @@ public class EventController implements EventApi {
         boolean response = eventService.deleteEvent(eventId, principal.getName());
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity<List<EventResponseDTO>> getAllUpcomingByLocation(String location) {
+        List<EventResponseDTO> response = eventService.getUpcomingByLocationList(location);
+        return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<List<EventResponseDTO>> getAllPastByLocation(String location) {
+        List<EventResponseDTO> response = eventService.getPastByLocationList(location);
+        return ResponseEntity.ok(response);
+    }
 }

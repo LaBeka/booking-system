@@ -23,8 +23,24 @@ public interface BookingAPI {
     String API_PATH_DICTIONARY = "/api/book";
 
     @GetMapping("/")
-    @Operation(summary = "Get own bookings. Available for all roles:")
+    @Operation(summary = "Get own bookings. Available for all user:")
+    @PreAuthorize("hasRole('USER')")
     ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(Principal user);
+
+    @GetMapping("/upcoming")
+    @Operation(summary = "Get own upcoming and active bookings. Available for all user:")
+    @PreAuthorize("hasRole('USER')")
+    ResponseEntity<List<BookingResponseDTO>> getOwnUpcomingBookings(Principal user);
+
+    @GetMapping("/past")
+    @Operation(summary = "Get own past bookings. Available for all user:")
+    @PreAuthorize("hasRole('USER')")
+    ResponseEntity<List<BookingResponseDTO>> getOwnPastBookings(Principal user);
+
+    @GetMapping("/{bookingId}")
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Get booking by booking id. Available for user")
+    ResponseEntity<BookingResponseDTO> getOwnBookingById(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal user);
 
     @GetMapping("/{eventId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")

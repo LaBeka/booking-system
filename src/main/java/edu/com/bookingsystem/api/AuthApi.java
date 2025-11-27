@@ -36,9 +36,14 @@ public interface AuthApi {
     ResponseEntity<UserResponseDTO> registerAdmin(@Valid @RequestBody UserRequestDTO dto, Principal principal);
 
     @PostMapping("/login")
-    @Operation(summary = "Create token for authentication to log in. NO ROLE REQUIRED")
+    @Operation(summary = "Create token for authentication to log in. FOR NON-GOOGLE LOGIN. NO ROLE REQUIRED")
     ResponseEntity<?> createAuthToken(
             @RequestParam @NotEmpty(message = "Email is mandatory")String email,
             @RequestParam @NotEmpty(message = "Password is mandatory") String password);
 
+
+    @PostMapping("/refresh")
+    @Operation(summary = "Refresh token for authentication to log in. NO ROLE REQUIRED")
+    ResponseEntity<?> refreshAuthToken(
+            @RequestParam @NotEmpty(message = "Email is mandatory") String refreshToken);
 }
