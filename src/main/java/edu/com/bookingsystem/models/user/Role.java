@@ -1,15 +1,14 @@
 package edu.com.bookingsystem.models.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Entity
-@Table(name = "roles")
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "roles")
 public class Role {
 
     @Id
@@ -19,3 +18,4 @@ public class Role {
     @Column(unique = true, nullable = false)
     private String name; // super ADMIN, STUDENT, TEACHER
 }
+

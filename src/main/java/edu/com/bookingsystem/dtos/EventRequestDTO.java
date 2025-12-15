@@ -1,15 +1,15 @@
 package edu.com.bookingsystem.dtos;
 
-import edu.com.bookingsystem.models.event.EventType;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
-@Data
+@Getter @Setter @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventRequestDTO {
 
     @NotBlank(message = "Title is required")
@@ -19,7 +19,7 @@ public class EventRequestDTO {
     private String description;
 
     @NotNull(message = "Event type is required")
-    private EventType type;
+    private String type;
 
     @NotBlank(message = "Location is required")
     private String location;
@@ -30,6 +30,4 @@ public class EventRequestDTO {
     @Min(value = 1, message = "Max participants must be at least 1")
     private int maxParticipants;
 
-    @NotNull(message = "Admin ID is required")
-    private UUID createdBy;
 }

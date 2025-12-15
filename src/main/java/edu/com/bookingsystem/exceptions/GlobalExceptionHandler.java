@@ -94,12 +94,13 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
 
         String paramName = ex.getParameterName();
-        error.put(paramName, "Missing required request parameter: '" + paramName + "'");
+        error.put(paramName, "Missing required request parameter: '" + paramName + "'"); // WHEN REQUESTPARAM IS MISSING OR DOES NOT MATCH AS THE PARAMETER
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(error);
     }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<Map<String, Object>> handleInvalidUUID(HttpMessageNotReadableException ex) {
         Map<String, Object> body = new HashMap<>();

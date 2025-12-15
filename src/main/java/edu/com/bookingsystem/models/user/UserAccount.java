@@ -1,6 +1,7 @@
 package edu.com.bookingsystem.models.user;
 
 import edu.com.bookingsystem.models.Booking;
+import edu.com.bookingsystem.models.Organization;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -14,12 +15,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "users")
+@Table(name = "user_accounts")
 public class UserAccount {
 
     @Id
@@ -40,6 +42,9 @@ public class UserAccount {
     private boolean active = true;
     private boolean deprecated = false;
 
+    @Enumerated(EnumType.STRING)
+    private AuthProvider authProvider; // GOOGLE, LOCAL, etc.
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "users_roles",
@@ -48,6 +53,10 @@ public class UserAccount {
     )
     private Set<Role> roles = new HashSet<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "bookedBy")
     private List<Booking> bookings;
+
+    @ManyToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
 }

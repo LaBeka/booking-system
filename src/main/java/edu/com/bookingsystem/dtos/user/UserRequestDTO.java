@@ -1,5 +1,6 @@
 package edu.com.bookingsystem.dtos.user;
 
+import edu.com.bookingsystem.models.user.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -20,5 +21,6 @@ public class UserRequestDTO {
     @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    private Set<String> roles; // IS OPTIONAL
+    private Set<Role> roles; // IS OPTIONAL
+    //no need of organization
 }

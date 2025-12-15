@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+
+    container_name: booking-db
+    environment:
+      MYSQL_ROOT_PASSWORD: u_s057385EEEE
+      MYSQL_DATABASE: booking_sys
+#      MYSQL_USER: root
+    ports:
+      - "3309:3306"
+    networks:
+      - spring-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pu_s057385EEEE"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+#      var/lib/mysql
+
+
+  app:
+    container_name: booking-app
+#    image: booking-jre:latest
+#    alternativt build: ./APP
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8300:8080"
+
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/booking_sys
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: u_s057385EEEE
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQLDialect
+
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+    networks:
+      - spring-network
+
+
+networks:
+  spring-network:
+    driver: bridge
+
+#volumes

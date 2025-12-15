@@ -1,5 +1,6 @@
 package edu.com.bookingsystem.dtos.user;
 
+import edu.com.bookingsystem.dtos.OrganizationResDTO;
 import lombok.Data;
 
 import java.util.Set;
@@ -12,4 +13,5 @@ public class UserResponseDTO {
     private String email;
     private boolean active;
     private Set<String> roles; // names of roles
+    private OrganizationResDTO org;
 }

@@ -3,10 +3,7 @@ package edu.com.bookingsystem.models;
 import edu.com.bookingsystem.models.event.Event;
 import edu.com.bookingsystem.models.user.UserAccount;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UuidGenerator;
 
@@ -14,7 +11,8 @@ import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter
+@Setter
 @Builder
 @Entity
 @NoArgsConstructor
@@ -30,12 +28,15 @@ public class Booking {
     private UUID id;
 
     @ManyToOne
+    @JoinColumn(name = "booked_by", nullable = false)
     private UserAccount bookedBy;
 
     @ManyToOne
+    @JoinColumn(name = "event_id", nullable = false)
     private Event event;
 
+    @JoinColumn(name = "booked_on", nullable = false)
     private LocalDateTime bookedOn;
 
-
+    private boolean active = true;
 }

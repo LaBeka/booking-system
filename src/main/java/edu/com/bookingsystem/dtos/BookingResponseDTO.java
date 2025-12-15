@@ -15,4 +15,5 @@ public class BookingResponseDTO {
     private UserResponseDTO bookedBy;
     private EventResponseDTO event;
     private LocalDateTime bookedOn;
+    private boolean active;
 }
