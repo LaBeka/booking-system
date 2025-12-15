@@ -4,15 +4,16 @@ import edu.com.bookingsystem.dtos.user.UserRequestDTO;
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.security.Principal;
+import java.util.UUID;
 
 @RequestMapping(AuthApi.API_PATH_DICTIONARY)
 @Tag(name = "Methods to work with AUTHENTICATION", description = AuthApi.API_PATH_DICTIONARY)
@@ -22,22 +23,30 @@ public interface AuthApi {
     String API_PATH_DICTIONARY = "/api/auth";
 
     @PostMapping("/register/user")
-    @Operation(summary = "Registration new user with roles: user")
-    ResponseEntity<UserResponseDTO> registerUser(@Valid @RequestBody UserRequestDTO dto, Principal principal);
+    @Operation(summary = "Create new user with LOCALE.PROVIDER. With default role 'USER'")
+    ResponseEntity<UserResponseDTO> createUser(
+            @Valid @RequestBody UserRequestDTO userRequestDTO,
+            Principal principal);
 
-    @PostMapping("/register/super_admin")
-    @Operation(summary = "Registration new user with roles: user, admin, super admin")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('USER')")
-    ResponseEntity<UserResponseDTO> registerSuperAdmin(@Valid @RequestBody UserRequestDTO dto, Principal principal);
+    @PostMapping("/changeUserTo/admin")
+    @Operation(summary = "Change existing user's 'USER' role to 'ADMIN'")
+    @PreAuthorize("hasRole('USER')")
+    ResponseEntity<UserResponseDTO> registerAdmin(
+            @NotNull(message = "Email of the user is mandatory") @RequestParam String email,
+            @NotNull(message = "ID of organization of the user is mandatory") @RequestParam UUID orgId,
+            Principal principal);
 
-    @PostMapping("/register/admin")
-    @Operation(summary = "Registration new user with roles: user and admin")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('USER')")
-    ResponseEntity<UserResponseDTO> registerAdmin(@Valid @RequestBody UserRequestDTO dto, Principal principal);
+    @PostMapping("/changeUserTo/manager")
+    @Operation(summary = "Change existing user's 'USER' role to 'MANAGER'")
+    @PreAuthorize("hasRole('USER')")
+    ResponseEntity<UserResponseDTO> registerManager(
+            @NotNull(message = "Email of the user is mandatory") @RequestParam String email,
+            @NotNull(message = "ID of organization of the user is mandatory") @RequestParam UUID orgId,
+            Principal principal);
 
     @PostMapping("/login")
     @Operation(summary = "Create token for authentication to log in. FOR NON-GOOGLE LOGIN. NO ROLE REQUIRED")
-    ResponseEntity<?> createAuthToken(
+    ResponseEntity<?> login(
             @RequestParam @NotEmpty(message = "Email is mandatory")String email,
             @RequestParam @NotEmpty(message = "Password is mandatory") String password);
 
@@ -45,5 +54,5 @@ public interface AuthApi {
     @PostMapping("/refresh")
     @Operation(summary = "Refresh token for authentication to log in. NO ROLE REQUIRED")
     ResponseEntity<?> refreshAuthToken(
-            @RequestParam @NotEmpty(message = "Email is mandatory") String refreshToken);
+            @RequestParam @NotEmpty(message = "Access token is mandatory") String refreshToken);
 }

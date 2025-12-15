@@ -17,7 +17,7 @@ public class JwtUtil {
 
     private final String secret = "supersecretkey123456789abcdcdcdcdcdcdcdcdcdcd";
 
-    public String generateToken(UserDetails user) {
+    public String generateAccessToken(UserDetails user) {
         Map<String,Object> claims = new HashMap<>();
 
         claims.put("roles", user
@@ -49,5 +49,11 @@ public class JwtUtil {
 
     public List<String>  extractRoles(String token){
         return extractAllClaims(token).get("roles", List.class);
+    }
+
+    public String generateRefreshToken(String username) {
+        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + 110000000))
+                .signWith(Keys.hmacShaKeyFor(secret.getBytes()), SignatureAlgorithm.HS256).compact();
     }
 }

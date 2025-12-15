@@ -24,4 +24,11 @@ public interface EventRepo extends JpaRepository<Event, UUID> {
     @Query("select e from Event e where e.id = :eventId")
     Optional<Event> findByIdForUpdate(@Param("eventId") UUID eventId);
     //is used only for booking an event, which tries to avoid the concurrent-multiple booking at the same time when event has the last spot
+
+    @Query("SELECT e FROM Event e WHERE e.organization.id = :id AND e.when > :date")
+    List<Event> findUpcomingListEventsByOrganization(@Param("id") UUID orgId, @Param("date") LocalDateTime now);
+
+
+    @Query("SELECT e FROM Event e WHERE e.organization.id = :id AND e.when < :date")
+    List<Event> findPastListEventsByOrganization(@Param("id") UUID orgId,  @Param("date") LocalDateTime now);
 }

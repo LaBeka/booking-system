@@ -6,7 +6,7 @@ import edu.com.bookingsystem.dtos.user.JwtDTO;
 import edu.com.bookingsystem.dtos.user.UserRequestDTO;
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
 import edu.com.bookingsystem.models.user.CustomUserDetails;
-import edu.com.bookingsystem.models.user.Role;
+import edu.com.bookingsystem.models.user.JwtToken;
 import edu.com.bookingsystem.models.user.UserAccount;
 import edu.com.bookingsystem.repos.JwtTokenRepo;
 import edu.com.bookingsystem.repos.UserAccountRepo;
@@ -21,11 +21,12 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,28 +39,26 @@ public class AuthController implements AuthApi {
     private final UserAccountRepo userAccountRepo;
     private final JwtTokenRepo  jwtTokenRepo;
 
-
-
     @Override
-    public ResponseEntity<UserResponseDTO> registerUser(UserRequestDTO dto, Principal principal) {
-        return ResponseEntity.ok(authService.register(dto, List.of("USER"), "admin2@school.com"));
-    }
-
-    @Override
-    public ResponseEntity<UserResponseDTO> registerSuperAdmin(UserRequestDTO dto, Principal principal) {
-        return ResponseEntity.ok(authService.register(dto, List.of("ADMIN", "USER"), principal.getName()));
+    public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO userRequestDTO, Principal principal) {
+        return ResponseEntity.ok(authService.createNewUserLocale(userRequestDTO, principal.getName()));
 
     }
 
     @Override
-    public ResponseEntity<UserResponseDTO> registerAdmin(UserRequestDTO dto, Principal principal) {
-        return ResponseEntity.ok(authService.register(dto, List.of("SUPER_ADMIN", "ADMIN", "USER"), principal.getName()));
+    public ResponseEntity<UserResponseDTO> registerAdmin(String email, UUID orgId, Principal principal) {
+        return ResponseEntity.ok(authService.registerAdmin(email, orgId, List.of("SUPER_ADMIN", "ADMIN"), principal.getName()));
 
+    }
+
+    @Override
+    public ResponseEntity<UserResponseDTO> registerManager(String email, UUID orgId, Principal principal) {
+        return ResponseEntity.ok(authService.registerManager(email, orgId, List.of("MANAGER"), principal.getName()));
     }
 
     //only for non oauth2 login works
     @Override
-    public ResponseEntity<String> createAuthToken(String email, String password) {
+    public ResponseEntity<?> login(String email, String password) {
         Authentication auth = null;
         try {
             auth = authenticationManager.authenticate(
@@ -68,10 +67,27 @@ public class AuthController implements AuthApi {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
         UserDetails user = userDetailsService.loadUserByUsername(auth.getName());
+        Optional<JwtToken> optionalToken = jwtTokenRepo.getByEmail(user.getUsername());
 
-        String token = jwtUtil.generateToken(user);
+        JwtToken token = optionalToken.orElseGet(() -> {
+            System.out.println("Refreshing token");
+            return JwtToken.builder()
+                    .email(user.getUsername())
+                    .build();
+        });
 
-        return ResponseEntity.ok(token);
+        String refreshToken = jwtUtil.generateRefreshToken(user.getUsername());
+        String accessToken = jwtUtil.generateAccessToken(user);
+
+        token.setRefreshToken(refreshToken);
+        JwtToken saved = jwtTokenRepo.save(token);
+
+        return ResponseEntity.ok(
+                JwtDTO.builder()
+                        .accessToken(accessToken)
+                        .refreshToken(saved.getRefreshToken())
+                        .build()
+        );
     }
 
     @Override
@@ -94,7 +110,7 @@ public class AuthController implements AuthApi {
             return ResponseEntity.status(403).body("Invalid refresh token");
         }
         UserDetails userDetails = CustomUserDetails.builder().user(user).build();
-        String newAccessToken = jwtUtil.generateToken(userDetails);
+        String newAccessToken = jwtUtil.generateAccessToken(userDetails);
 
         return ResponseEntity.ok(new JwtDTO(newAccessToken, refreshToken));
     }

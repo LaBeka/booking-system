@@ -1,6 +1,7 @@
 package edu.com.bookingsystem.models.user;
 
 import edu.com.bookingsystem.models.Booking;
+import edu.com.bookingsystem.models.Organization;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.*;
@@ -54,4 +55,8 @@ public class UserAccount {
 
     @OneToMany(mappedBy = "bookedBy")
     private List<Booking> bookings;
+
+    @ManyToOne
+    @JoinColumn(name = "org_id")
+    private Organization organization;
 }

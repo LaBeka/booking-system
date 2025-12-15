@@ -22,4 +22,5 @@ public class UserRequestDTO {
     private String password;
 
     private Set<Role> roles; // IS OPTIONAL
+    //no need of organization
 }

@@ -27,28 +27,31 @@ public interface EventApi {
     String API_PATH_DICTIONARY = "/api/event";
 
     @GetMapping("/all")
-    @Operation(summary = "get all events. NO ROLES REQUIRED")
+    @Operation(summary = "Get all events. NO ROLES REQUIRED")
     ResponseEntity<List<EventResponseDTO>> getList();
 
+    @GetMapping("/spot/{eventId}")
+    @Operation(summary = "Get number of available spots per event. NO ROLES REQUIRED")
+    ResponseEntity<Integer> getNumberOfAvailableSpotsFPerEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId);
+
     @PostMapping("/create")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    @Operation(summary = "Create new event. Only available for roles: admin & super admin")
+    @PreAuthorize("hasRole('MANAGER')")
+    @Operation(summary = "Create new event. Only available for roles: admin & manager")
     ResponseEntity<EventResponseDTO> createEvent(@Valid @RequestBody EventRequestDTO dto, Principal principal);
 
     @PutMapping("/update/{eventId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    @Operation(summary = "Update existing event. Only available for roles: admin, super admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @Operation(summary = "Update existing event. Only available for roles: admin, manager")
     ResponseEntity<EventResponseDTO> updateEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId, @Valid @RequestBody EventRequestDTO dto, Principal principal);
 
     @DeleteMapping("/delete/{eventId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    @Operation(summary = "Delete existing event. Only available for roles: admin, super admin")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    @Operation(summary = "Delete existing event. Only available for roles: admin, manager")
     ResponseEntity<Boolean> deleteEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId, Principal principal);
 
 
     @GetMapping("/upcoming")
     @Operation(summary = "get all events. NO ROLES REQUIRED")
-    @PreAuthorize("hasRole('USER')")
     ResponseEntity<List<EventResponseDTO>> getAllUpcomingByLocation(
             @RequestParam
             @NotBlank(message = "Location is mandatory")
@@ -58,7 +61,6 @@ public interface EventApi {
 
     @GetMapping("/past")
     @Operation(summary = "get all events. NO ROLES REQUIRED")
-    @PreAuthorize("hasRole('USER')")
     ResponseEntity<List<EventResponseDTO>> getAllPastByLocation(
             @RequestParam
             @NotBlank(message = "Location is mandatory")

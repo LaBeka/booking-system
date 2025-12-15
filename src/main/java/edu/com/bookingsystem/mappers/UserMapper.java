@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@Mapper(componentModel = "spring", uses = RoleMapper.class)
+@Mapper(componentModel = "spring", uses = { RoleMapper.class, OrganizationMapper.class })
 public interface UserMapper {
 
     @Mapping(target = "id", ignore = true)
@@ -21,5 +21,6 @@ public interface UserMapper {
                   @Context PasswordEncoder encoder);
 
     @Mapping(target = "roles", expression = "java(entity.getRoles().stream().map(Role::getName).collect(java.util.stream.Collectors.toSet()))")
+    @Mapping(target = "org", source = "organization")
     UserResponseDTO toResponseDTO(UserAccount entity);
 }

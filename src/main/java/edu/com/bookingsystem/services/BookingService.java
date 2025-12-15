@@ -56,7 +56,6 @@ public class BookingService {
                 .toList();
     }
 
-    //only admins TODO check if i can do this? event.getBookings()
     public List<BookingResponseDTO> getListByEventId(UUID eventId) {
         Event event = getExistingEventById(eventId);
         List<Booking> bookings = event.getBookings();

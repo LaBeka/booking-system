@@ -26,6 +26,12 @@ public class EventController implements EventApi {
     }
 
     @Override
+    public ResponseEntity<Integer> getNumberOfAvailableSpotsFPerEvent(UUID eventId) {
+        Integer number = eventService.getAvailableSeats(eventId);
+        return ResponseEntity.ok(number);
+    }
+
+    @Override
     public ResponseEntity<EventResponseDTO> createEvent(EventRequestDTO dto, Principal principal) {
         EventResponseDTO response = eventService.createEvent(dto, principal.getName());
         return ResponseEntity.ok(response);

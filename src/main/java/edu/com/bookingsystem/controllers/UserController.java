@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Validated
@@ -29,8 +30,8 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public ResponseEntity<List<UserResponseDTO>> getAllSuAdmin() {
-        List<UserResponseDTO> response = authService.getAllSuperAdmin();
+    public ResponseEntity<List<UserResponseDTO>> getAllManagers(UUID orgId) {
+        List<UserResponseDTO> response = authService.getAllManagers(orgId);
         return ResponseEntity.ok(response);
     }
 }

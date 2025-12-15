@@ -43,7 +43,7 @@ public interface BookingAPI {
     ResponseEntity<BookingResponseDTO> getOwnBookingById(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal user);
 
     @GetMapping("/{eventId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @Operation(summary = "Get all bookings by event id. Available for admins")
     ResponseEntity<List<BookingResponseDTO>> getAllBookingsByEventId(@PathVariable @NotNull(message = "Event id is mandatory") UUID eventId);
 
@@ -58,7 +58,7 @@ public interface BookingAPI {
     ResponseEntity<BookingResponseDTO> unBookEvent(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal principal);
 
     @DeleteMapping("/delete/{bookingId}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @Operation(summary = "Delete existing booking by its id. Only available for roles: admin, super admin")
     ResponseEntity<Boolean> deleteBooking(@PathVariable  @NotNull(message = "Booking id is mandatory") UUID bookingId);
 }

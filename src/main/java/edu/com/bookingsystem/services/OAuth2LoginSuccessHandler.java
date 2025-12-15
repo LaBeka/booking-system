@@ -1,12 +1,8 @@
 package edu.com.bookingsystem.services;
 
-import com.sun.jdi.PrimitiveValue;
 import edu.com.bookingsystem.config.JwtUtil;
-import edu.com.bookingsystem.models.user.CustomOAuth2User;
-import edu.com.bookingsystem.models.user.CustomUserDetails;
-import edu.com.bookingsystem.models.user.Role;
-import edu.com.bookingsystem.models.user.UserAccount;
-import edu.com.bookingsystem.repos.UserAccountRepo;
+import edu.com.bookingsystem.models.user.*;
+import edu.com.bookingsystem.repos.JwtTokenRepo;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +15,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -27,6 +24,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     private JwtUtil jwtUtil;
     private AuthService userAccountService;
+    private JwtTokenRepo jwtTokenRepo;
 
     @Autowired
     public OAuth2LoginSuccessHandler(JwtUtil jwtUtil) {
@@ -39,12 +37,17 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         this.userAccountService = userAccountService;
     }
 
+    @Autowired
+    @Lazy
+    public void setJwtTokenRepo(JwtTokenRepo jwtTokenRepo) {
+        this.jwtTokenRepo = jwtTokenRepo;
+    }
     @Override
     public void onAuthenticationSuccess(
             HttpServletRequest request,
             HttpServletResponse response,
-            Authentication authentication)
-            throws IOException, ServletException {
+            Authentication authentication
+    ) throws IOException, ServletException {
 
         UserAccount user = null;
         Object principal = authentication.getPrincipal();
@@ -55,7 +58,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
             String email = defaultUser.getAttribute("email");
             String name = defaultUser.getAttribute("name");
             // Lookup or save UserAccount by email here
-            user = userAccountService.findOrCreateByEmail(email, name);
+            user = userAccountService.findOrCreateByEmailGoogle(email, name);
         } else {
             throw new IllegalStateException("Unknown principal type: " + principal.getClass());
         }
@@ -68,12 +71,26 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         UserDetails userDetails = CustomUserDetails.builder()
                 .user(user)
                 .build();
-        String token = jwtUtil.generateToken(userDetails);
+
+        Optional<JwtToken> optionalToken = jwtTokenRepo.getByEmail(userDetails.getUsername());
+
+        JwtToken token = optionalToken.orElseGet(() -> {
+            System.out.println("Refreshing token");
+            return JwtToken.builder()
+                    .email(userDetails.getUsername())
+                    .build();
+        });
+
+        String refreshToken = jwtUtil.generateRefreshToken(userDetails.getUsername());
+        String accessToken = jwtUtil.generateAccessToken(userDetails);
+
+        token.setRefreshToken(refreshToken);
+        JwtToken saved = jwtTokenRepo.save(token);
 
         // return JWT as JSON "token": "..."
         response.setContentType("application/json");
         response.getWriter().write("""
-            { "token": "%s" }
-        """.formatted(token));
+            { "token": "%s", "refreshToken": "%s" }
+        """.formatted(accessToken, refreshToken));
     }
 }

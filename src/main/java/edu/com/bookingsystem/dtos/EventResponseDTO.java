@@ -2,14 +2,15 @@ package edu.com.bookingsystem.dtos;
 
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
 import edu.com.bookingsystem.models.event.EventType;
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Data
+@Getter @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class EventResponseDTO {
 
     private UUID id;
@@ -24,4 +25,5 @@ public class EventResponseDTO {
     private int currentParticipants;
     private UserResponseDTO createdBy;
     private LocalDateTime createdAt;
+    private OrganizationResDTO organization;
 }

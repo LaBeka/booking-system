@@ -1,7 +1,8 @@
 INSERT INTO roles (id, name)
 VALUES (1, 'SUPER_ADMIN'),
        (2, 'ADMIN'),
-       (3, 'USER');
+       (3, 'USER'),
+       (4, 'MANAGER');
 
 INSERT INTO user_accounts (id, full_name, email, password, active, deprecated)
 VALUES ('11111111-1111-1111-1111-111111111111', 'Admin One', 'admin1@school.com', 'pass', TRUE, FALSE),
@@ -44,7 +45,9 @@ VALUES ('44444444-4444-4444-4444-444444444444', 3),
        ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa', 3),
        ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb', 3),
        ('cccccccc-cccc-cccc-cccc-cccccccccccc', 3),
-       ('dddddddd-dddd-dddd-dddd-dddddddddddd', 3);
+       ('cccccccc-cccc-cccc-cccc-cccccccccccc', 4),
+       ('dddddddd-dddd-dddd-dddd-dddddddddddd', 3),
+       ('dddddddd-dddd-dddd-dddd-dddddddddddd', 4);
 
 INSERT INTO events
 (id, title, description, type, active, deprecated, location, when_time,
@@ -81,7 +84,18 @@ VALUES
      '2026-03-10 10:00:00',
      '33333333-3333-3333-3333-333333333333',
      '2025-10-20 19:00:00',
-     5, 0);
+     5, 0),
+
+    ('eeeeeeee-4444-4444-4444-444444444444',
+     'ReadBull sport event',
+     'Intensive sport event',
+     'SPORT_EVENT',
+     TRUE, FALSE,
+     'Alp Campus',
+     '2025-03-10 10:00:00',
+     '33333333-3333-3333-3333-333333333333',
+     '2025-01-20 19:00:00',
+     5, 4);
 
 INSERT INTO bookings (id, booked_by, event_id, booked_on, active)
 VALUES

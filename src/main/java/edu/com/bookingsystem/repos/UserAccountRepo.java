@@ -15,4 +15,5 @@ public interface UserAccountRepo extends JpaRepository<UserAccount, UUID> {
 
     @Query("SELECT u FROM UserAccount u JOIN u.roles r WHERE r.name = :keyword")
     List<UserAccount> getAllByRoles(@Param("keyword") String role);
+
 }

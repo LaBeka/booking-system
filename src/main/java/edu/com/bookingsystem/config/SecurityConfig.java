@@ -53,16 +53,20 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/swagger-ui.html",
+                                "/",
+                                "/swagger-ui.html",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**",
-                                "/api/auth/login",
-                                "/api/auth/register/user",
                                 "/error",
                                 "/oauth2/**",
                                 "/login/oauth2/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/event/all").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/api/auth/register/user").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/org/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/api/event/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex
