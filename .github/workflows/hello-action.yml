@@ -1,0 +1,22 @@
+name: hello Github actions
+
+on:
+  push:
+    branches:
+      ["**"]
+#    - "dev"
+#    - "github-actions"
+    pull_request:
+      branches: ["dev"]
+
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print Greeting
+        run: echo "hello from github actions"
+
+      - name: Print current date
+        run: date
