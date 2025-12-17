@@ -59,7 +59,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/error",
                                 "/oauth2/**",
-                                "/login/oauth2/**"
+                                "/login/oauth2/**",
+                                "/service/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/event/all").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
