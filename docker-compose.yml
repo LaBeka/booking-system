@@ -22,7 +22,7 @@ services:
 #      var/lib/mysql
 
 
-  app:
+  spring-app:
     container_name: booking-app
 #    image: booking-jre:latest
 #    alternativt build: ./APP
@@ -43,6 +43,15 @@ services:
 
     networks:
       - spring-network
+
+#  gateway-app:
+#    image: gateway-app
+#
+#    ports:
+#      - "8301:8080"
+#
+#    networks:
+#      - spring-network
 
 
 networks:
