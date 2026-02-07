@@ -54,16 +54,16 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/error",
                                 "/oauth2/**",
-                                "/login/oauth2/**"
+                                "/login/oauth2/**",
+                                "/api/user/**",
+                                "/api/event/all",
+                                "/api/auth/login",
+                                "/api/auth/refresh",
+                                "/api/auth/register/user",
+                                "/api/org/**",
+                                "/api/event/**",
+                                "/produce/**"
                         ).permitAll()
-                        .requestMatchers("/produce/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/event/all").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/auth/register/user").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/org/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/service/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/event/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex

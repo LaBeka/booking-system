@@ -1,6 +1,8 @@
 The flow of authentication:
 
-1. http://localhost:8200/ -> response.sendRedirect("/oauth2/authorization/google"); -> User clicks “Login with Google”.
+1. http://localhost:server.port/ -> response.sendRedirect("/oauth2/authorization/google"); -> User clicks “Login with Google”.
+When first time to login with oauth2 new user gets created by google credential and database will be added new user with admin_created_by
+'admin1@school.com' read the method findOrCreateByEmailGoogle in UserService USER_ROLE & orgId-null;
 
 2. Frontend/browser is redirected to Google, user consents.
 

@@ -16,6 +16,6 @@ public interface GoogleApi {
     String API_PATH_DICTIONARY = "/";
 
     @GetMapping()
-    @Operation(summary = "Registration/Login new user with USER role via google account 'localhost:8200'")
+    @Operation(summary = "Registration/Login new user with USER role via google account 'localhost:{server.port}' & SEND BACK GENERATED TOKEN AND REFRESH TOKEN!")
     void redirectToGoogleLogin(HttpServletResponse response) throws IOException;
 }

@@ -51,7 +51,8 @@ public class UserService {
         roles.forEach(role -> manager.getRoles().add(role));
 
         UserAccount saved = userRepository.save(manager);
-        Optional<UserUpdate> update = createHistoryRecord(saved, "MANAGER", admin, "Update user's role from user to manager: ");
+        Optional<UserUpdate> update = createHistoryRecord(saved, "MANAGER", admin,
+                "Update user's(" + email + ") role from user to manager: ");
 
         return  userMapper.toResponseDTO(saved);
     }
@@ -72,7 +73,8 @@ public class UserService {
         roles.forEach(role -> admin.getRoles().add(role));
 
         UserAccount savedAdmin = userRepository.save(admin);
-        Optional<UserUpdate> update = createHistoryRecord(savedAdmin, "ADMIN", updatedBy, "Update user's role from user to admin: ");
+        Optional<UserUpdate> update = createHistoryRecord(savedAdmin, "ADMIN", updatedBy,
+                "Update user's(" + email + ") role from user to admin: ");
 
         return  userMapper.toResponseDTO(savedAdmin);
     }
@@ -85,10 +87,10 @@ public class UserService {
                 .updatedAt(LocalDate.now())
                 .build();
         switch (role) {
-            case "USER": updateUser.setComment(message + user.getEmail()); break;
-            case "ADMIN" : updateUser.setComment(message + user.getEmail()); break;
-            case "SUPER_ADMIN": updateUser.setComment( message + user.getEmail()); break;
-            case "MANAGER": updateUser.setComment( message + user.getEmail()); break;
+            case "USER": updateUser.setComment(message + "[" + user.getEmail() + "]"); break;
+            case "ADMIN" : updateUser.setComment(message + "[" + user.getEmail() + "]"); break;
+            case "SUPER_ADMIN": updateUser.setComment( message + "[" + user.getEmail() + "]"); break;
+            case "MANAGER": updateUser.setComment( message + "[" + user.getEmail() + "]"); break;
         }
         Optional<UserUpdate> saveUpdate = Optional.of(userUpdateRepo.save(updateUser));
         return saveUpdate;
@@ -146,7 +148,8 @@ public class UserService {
                     .build();
             UserAccount saved = userRepository.save(u);
             user = Optional.of(saved);
-            Optional<UserUpdate> update = createHistoryRecord(saved, "USER", createdBy, "Initial creation of new user with role 'USER'");
+            Optional<UserUpdate> update = createHistoryRecord(saved, "USER", createdBy,
+                    "Initial creation of new user with email '" + email + "' with role 'USER'");
         }
         return user.get();
     }
@@ -170,7 +173,8 @@ public class UserService {
                     .build();
             UserAccount saved = userRepository.save(u);
             user = Optional.of(saved);
-            Optional<UserUpdate> update = createHistoryRecord(saved, "USER", createdBy, "Initial creation of new user with role 'USER'");
+            Optional<UserUpdate> update = createHistoryRecord(saved, "USER", createdBy,
+                    "Initial creation of new user  with email '" + dto.getEmail() + "'  role 'USER'");
         }
         return userMapper.toResponseDTO(user.get());
     }

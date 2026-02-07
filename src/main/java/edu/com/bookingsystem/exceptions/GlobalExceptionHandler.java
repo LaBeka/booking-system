@@ -6,6 +6,8 @@ import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -44,6 +46,7 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }
+
     @ExceptionHandler(EntityNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleEntityExists(EntityNotFoundException ex) {
 
@@ -68,20 +71,22 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex)
-    {
-        Map<String, String> error = new HashMap<>();
-        ex.getBindingResult().getFieldErrors()
-                .forEach(err -> error.put(err.getField(), err.getDefaultMessage()));
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    public ResponseEntity<Map<String, String>> handleValidation(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        errors.put("customError", "[MethodArgumentNotValidException] Invalid type");
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<Object> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
 
         Map<String, Object> body = new HashMap<>();
-        body.put("error", "Invalid type");
+        body.put("error", "[MethodArgumentNotValidException] Invalid type");
         body.put("message", "Expected numeric value but got: " + ex.getValue());
         body.put("status", HttpStatus.BAD_REQUEST.value());
 
@@ -94,6 +99,7 @@ public class GlobalExceptionHandler {
         Map<String, String> error = new HashMap<>();
 
         String paramName = ex.getParameterName();
+        error.put("error", "[MissingServletRequestParameterException]");
         error.put(paramName, "Missing required request parameter: '" + paramName + "'"); // WHEN REQUESTPARAM IS MISSING OR DOES NOT MATCH AS THE PARAMETER
 
         return ResponseEntity
@@ -108,14 +114,23 @@ public class GlobalExceptionHandler {
 
         Throwable cause = ex.getMostSpecificCause();
         if (cause instanceof IllegalArgumentException && cause.getMessage().contains("java.util.UUID")) {
-            body.put("error", "Invalid UUID format");
+            body.put("error", "Invalid UUID format. [HttpMessageNotReadableException]");
             body.put("message", "One of the provided UUID fields is not in valid 36-character format.");
             return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
         }
 
-        body.put("error", "Malformed JSON");
+        body.put("error", "Malformed JSON. [HttpMessageNotReadableException]");
         body.put("message", "One of the provided fields could not be parsed.");
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UsernameNotFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleValidationExceptions(UsernameNotFoundException ex) {
+        Map<String, Object> body = new HashMap<>();
+        body.put("status", HttpStatus.NOT_FOUND.value());
+        body.put("message", ex.getMessage());
+
+        return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
 }

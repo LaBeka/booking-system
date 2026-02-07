@@ -20,7 +20,6 @@ public interface UserApi {
     String API_PATH_DICTIONARY = "/api/user";
 
     @GetMapping("/get/user")
-    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "List of users with roles: user")
     ResponseEntity<List<UserResponseDTO>> getAllUser();
 

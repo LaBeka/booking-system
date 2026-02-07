@@ -17,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -63,7 +65,13 @@ public class AuthController implements AuthApi {
         try {
             auth = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(email, password)); // here jwt token tries to trigger to loaduserbyname()
-        } catch (AuthenticationException e) {
+        } catch (BadCredentialsException e) {
+            // 1. Password was wrong
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+        } catch (DisabledException e) {
+            // 2. Account is disabled
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account is disabled");
+        }catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
         UserDetails user = userDetailsService.loadUserByUsername(auth.getName());
