@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -30,10 +29,6 @@ public class SecurityConfig {
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
-    @Bean
-    public PasswordEncoder passwordEncoder(){
-        return new BCryptPasswordEncoder();
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http, PasswordEncoder passwordEncoder) throws Exception {
@@ -59,14 +54,15 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/error",
                                 "/oauth2/**",
-                                "/login/oauth2/**",
-                                "/service/**"
+                                "/login/oauth2/**"
                         ).permitAll()
+                        .requestMatchers("/produce/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/event/all").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/refresh").permitAll()
                         .requestMatchers(HttpMethod.POST,"/api/auth/register/user").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/org/**").permitAll()
+                        .requestMatchers(HttpMethod.GET,"/service/**").permitAll()
                         .requestMatchers(HttpMethod.GET,"/api/event/**").permitAll()
                         .anyRequest().authenticated()
                 )

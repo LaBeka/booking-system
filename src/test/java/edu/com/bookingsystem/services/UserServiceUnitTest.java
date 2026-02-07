@@ -19,10 +19,8 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-class AuthServiceUnitTest {
+class UserServiceUnitTest {
 
     @Mock UserAccountRepo userRepository;
     @Mock UserMapper userMapper;
@@ -33,7 +31,7 @@ class AuthServiceUnitTest {
 
     @Spy
     @InjectMocks
-    AuthService service;
+    UserService service;
 
     UserResponseDTO response;
     UserRequestDTO request;

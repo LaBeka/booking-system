@@ -2,7 +2,7 @@ package edu.com.bookingsystem.controllers;
 
 import edu.com.bookingsystem.api.UserApi;
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
-import edu.com.bookingsystem.services.AuthService;
+import edu.com.bookingsystem.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -16,22 +16,22 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController implements UserApi {
 
-    private final AuthService authService;
+    private final UserService userService;
     @Override
     public ResponseEntity<List<UserResponseDTO>> getAllUser() {
-        List<UserResponseDTO> response = authService.getAllUser();
+        List<UserResponseDTO> response = userService.getAllUser();
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<List<UserResponseDTO>> getAllAdmin() {
-        List<UserResponseDTO> response = authService.getAllAdmin();
+        List<UserResponseDTO> response = userService.getAllAdmin();
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<List<UserResponseDTO>> getAllManagers(UUID orgId) {
-        List<UserResponseDTO> response = authService.getAllManagers(orgId);
+        List<UserResponseDTO> response = userService.getAllManagers(orgId);
         return ResponseEntity.ok(response);
     }
 }

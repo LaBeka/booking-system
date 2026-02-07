@@ -10,6 +10,6 @@ public class GreetingController {
 
     @GetMapping("/hello")
     public String hello(){
-        return "Hello microservice world!";
+        return "Booking system: Hello microservice world!";
     }
 }

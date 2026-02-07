@@ -47,7 +47,7 @@ public interface AuthApi {
     @PostMapping("/login")
     @Operation(summary = "Create token for authentication to log in. FOR NON-GOOGLE LOGIN. NO ROLE REQUIRED")
     ResponseEntity<?> login(
-            @RequestParam @NotEmpty(message = "Email is mandatory")String email,
+            @RequestParam @NotEmpty(message = "Email is mandatory") String email,
             @RequestParam @NotEmpty(message = "Password is mandatory") String password);
 
 

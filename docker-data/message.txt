@@ -1,0 +1,1 @@
+"Reading Booking system: Hello microservice world! the string is from message.txt!!!";

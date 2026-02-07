@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private JwtUtil jwtUtil;
-    private AuthService userAccountService;
+    private UserService userAccountService;
     private JwtTokenRepo jwtTokenRepo;
 
     @Autowired
@@ -33,7 +33,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
 
     @Autowired
     @Lazy
-    public void setUserAccountService(AuthService userAccountService) {
+    public void setUserAccountService(UserService userAccountService) {
         this.userAccountService = userAccountService;
     }
 

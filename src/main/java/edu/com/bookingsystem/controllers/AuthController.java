@@ -10,7 +10,7 @@ import edu.com.bookingsystem.models.user.JwtToken;
 import edu.com.bookingsystem.models.user.UserAccount;
 import edu.com.bookingsystem.repos.JwtTokenRepo;
 import edu.com.bookingsystem.repos.UserAccountRepo;
-import edu.com.bookingsystem.services.AuthService;
+import edu.com.bookingsystem.services.UserService;
 import edu.com.bookingsystem.services.CustomUserDetailsService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AuthController implements AuthApi {
 
-    private final AuthService authService;
+    private final UserService userService;
     private final JwtUtil jwtUtil;
     private final CustomUserDetailsService userDetailsService;
     private final AuthenticationManager authenticationManager;
@@ -41,22 +41,22 @@ public class AuthController implements AuthApi {
 
     @Override
     public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO userRequestDTO, Principal principal) {
-        return ResponseEntity.ok(authService.createNewUserLocale(userRequestDTO, principal.getName()));
+        return ResponseEntity.ok(userService.createNewUserLocale(userRequestDTO, principal.getName()));
 
     }
 
     @Override
     public ResponseEntity<UserResponseDTO> registerAdmin(String email, UUID orgId, Principal principal) {
-        return ResponseEntity.ok(authService.registerAdmin(email, orgId, List.of("SUPER_ADMIN", "ADMIN"), principal.getName()));
+        return ResponseEntity.ok(userService.registerAdmin(email, orgId, List.of("SUPER_ADMIN", "ADMIN"), principal.getName()));
 
     }
 
     @Override
     public ResponseEntity<UserResponseDTO> registerManager(String email, UUID orgId, Principal principal) {
-        return ResponseEntity.ok(authService.registerManager(email, orgId, List.of("MANAGER"), principal.getName()));
+        return ResponseEntity.ok(userService.registerManager(email, orgId, List.of("MANAGER"), principal.getName()));
     }
 
-    //only for non oauth2 login works
+    //only for non-oauth2 login works
     @Override
     public ResponseEntity<?> login(String email, String password) {
         Authentication auth = null;

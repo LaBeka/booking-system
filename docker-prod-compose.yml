@@ -1,0 +1,52 @@
+
+services:
+
+  producer-service: # The Service Name (used by Docker Compose)
+    container_name: service-b # The actual name when you run 'docker ps'
+    build: . # Tells Docker to build the JAR from the local Dockerfile
+    depends_on:
+      mysql:
+        condition: service_healthy  # This waits for the ping test to pass
+    ports:
+      - "8081:8080" # Map Host 8081 to Container 8080
+    environment:
+      - FILE_PATH:/data/message.txt
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/booking_sys
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=u_s057385EEEE
+    volumes:
+      # Format: [Host Path] : [Container Path]
+      - ./docker-data:/data
+    networks:
+      - microservice_targetnet
+
+
+  mysql:
+    image: mysql:8.4
+    restart: unless-stopped
+
+    container_name: booking-db
+    environment:
+      MYSQL_ROOT_PASSWORD: u_s057385EEEE
+      MYSQL_DATABASE: booking_sys
+    #      MYSQL_USER: root
+    ports:
+      - "3319:3306"
+    networks:
+      - microservice_targetnet
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-pu_s057385EEEE" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+
+networks:
+  microservice_targetnet:
+    driver: bridge
+    external: true
+
+
+volumes:
+  beka_volume:
