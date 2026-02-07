@@ -1,6 +1,7 @@
 package edu.com.bookingsystem.config;
 
 
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -17,7 +18,7 @@ public class JwtUtil {
 
     private final String secret = "supersecretkey123456789abcdcdcdcdcdcdcdcdcdcd";
 
-    public String generateAccessToken(UserDetails user) {
+    public String generateAccessToken(CustomUserDetails user) {
         Map<String,Object> claims = new HashMap<>();
 
         claims.put("roles", user
@@ -25,6 +26,12 @@ public class JwtUtil {
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .toList());
+        claims.put("id", user.getId());
+        claims.put("email", user.getUsername());
+        claims.put("fullName", user.getFullName());
+        if (user.getOrganizationId() != null) {
+            claims.put("orgId", user.getOrganizationId());
+        }
 
         String compact = Jwts.builder()
                 .setClaims(claims)

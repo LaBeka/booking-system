@@ -2,6 +2,7 @@ package edu.com.bookingsystem.controllers;
 
 import edu.com.bookingsystem.api.BookingAPI;
 import edu.com.bookingsystem.dtos.BookingResponseDTO;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import edu.com.bookingsystem.services.BookingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,25 +20,25 @@ public class BookingController implements BookingAPI {
     private final BookingService bookingService;
 
     @Override
-    public ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(Principal user) {
+    public ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(CustomUserDetails user) {
         List<BookingResponseDTO> response = bookingService.getList(user);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<List<BookingResponseDTO>> getOwnUpcomingBookings(Principal user) {
+    public ResponseEntity<List<BookingResponseDTO>> getOwnUpcomingBookings(CustomUserDetails user) {
         List<BookingResponseDTO> response = bookingService.getUpcomingBookings(user);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<List<BookingResponseDTO>> getOwnPastBookings(Principal user) {
+    public ResponseEntity<List<BookingResponseDTO>> getOwnPastBookings(CustomUserDetails user) {
         List<BookingResponseDTO> response = bookingService.getPastBookings(user);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<BookingResponseDTO> getOwnBookingById(UUID bookingId, Principal user) {
+    public ResponseEntity<BookingResponseDTO> getOwnBookingById(UUID bookingId, CustomUserDetails user) {
         BookingResponseDTO response = bookingService.getBookingById(bookingId, user);
         return ResponseEntity.ok(response);
     }
@@ -49,13 +50,13 @@ public class BookingController implements BookingAPI {
     }
 
     @Override
-    public ResponseEntity<BookingResponseDTO> bookEvent(UUID eventId, Principal user) {
+    public ResponseEntity<BookingResponseDTO> bookEvent(UUID eventId, CustomUserDetails user) {
         BookingResponseDTO response = bookingService.bookEvent(eventId, user);
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<BookingResponseDTO> unBookEvent(UUID bookingId, Principal user) {
+    public ResponseEntity<BookingResponseDTO> unBookEvent(UUID bookingId, CustomUserDetails user) {
         BookingResponseDTO response = bookingService.unBookEvent(bookingId, user);
         return ResponseEntity.ok(response);
     }

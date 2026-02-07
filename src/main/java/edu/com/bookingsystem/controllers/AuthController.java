@@ -74,7 +74,7 @@ public class AuthController implements AuthApi {
         }catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found");
         }
-        UserDetails user = userDetailsService.loadUserByUsername(auth.getName());
+        CustomUserDetails user = userDetailsService.loadUserByUsername(auth.getName());
         Optional<JwtToken> optionalToken = jwtTokenRepo.getByEmail(user.getUsername());
 
         JwtToken token = optionalToken.orElseGet(() -> {
@@ -117,7 +117,7 @@ public class AuthController implements AuthApi {
         if (!refreshToken.equals(userRefreshToken)){
             return ResponseEntity.status(403).body("Invalid refresh token");
         }
-        UserDetails userDetails = CustomUserDetails.builder().user(user).build();
+        CustomUserDetails userDetails = CustomUserDetails.builder().user(user).build();
         String newAccessToken = jwtUtil.generateAccessToken(userDetails);
 
         return ResponseEntity.ok(new JwtDTO(newAccessToken, refreshToken));

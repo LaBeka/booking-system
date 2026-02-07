@@ -1,5 +1,6 @@
 package edu.com.bookingsystem.services;
 
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import edu.com.bookingsystem.models.user.UserAccount;
@@ -19,19 +20,12 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserAccountRepo userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         UserAccount user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + email));
 
-        user.getRoles().stream().forEach(g-> System.out.println(g.getName()));
+        CustomUserDetails customUserDetails = new CustomUserDetails(user);
 
-
-        User userdetails = new User(user.getEmail(),
-                user.getPassword(),
-                user.getRoles()
-                        .stream()
-                        .map(role -> new SimpleGrantedAuthority(role.getName()))
-                        .toList());
-        return userdetails;
+        return customUserDetails;
     }
 }

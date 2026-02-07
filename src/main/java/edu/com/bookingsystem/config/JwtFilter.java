@@ -1,6 +1,8 @@
 package edu.com.bookingsystem.config;
 
 
+import edu.com.bookingsystem.models.user.CustomUserDetails;
+import edu.com.bookingsystem.services.CustomUserDetailsService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,6 +25,7 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final CustomUserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(
@@ -35,18 +40,26 @@ public class JwtFilter extends OncePerRequestFilter {
 
             try {
                 String token = header.substring(7).trim();
-
                 String username = jwtUtil.extractUserName(token);
-                List<String> roles = jwtUtil.extractRoles(token);
-                List<SimpleGrantedAuthority> authorities = roles.stream()
-                        .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
-                        .toList();
+                if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-                UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                        username, null, authorities);
-                SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }catch (Exception e)
-            {
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                    List<String> roles = jwtUtil.extractRoles(token);
+                    List<SimpleGrantedAuthority> authorities = roles.stream()
+                            .map(r -> new SimpleGrantedAuthority("ROLE_" + r))
+                            .toList();
+
+                    UsernamePasswordAuthenticationToken authenticationToken =
+                            new UsernamePasswordAuthenticationToken(
+                                    userDetails, // <--- FIX IS HERE
+                                    null, authorities
+                                    );
+
+                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                }
+            } catch (Exception e) {
                 System.out.println("Invalid JWT → " + e.getMessage());
                 return;
             }

@@ -3,12 +3,14 @@ package edu.com.bookingsystem.api;
 import edu.com.bookingsystem.dtos.EventResponseDTO;
 import edu.com.bookingsystem.dtos.OrganizationReqDTO;
 import edu.com.bookingsystem.dtos.OrganizationResDTO;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,17 +31,23 @@ public interface OrganizationApi {
     @PostMapping("/create")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create new organization. Only available for roles: admin")
-    ResponseEntity<OrganizationResDTO> createOrg(@Valid @RequestBody OrganizationReqDTO dto, Principal principal);
+    ResponseEntity<OrganizationResDTO> createOrg(@Valid @RequestBody OrganizationReqDTO dto,
+                                                 @AuthenticationPrincipal CustomUserDetails principal);
 
     @PutMapping("/update/{orgId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update existing organization. Only available for roles: admin")
-    ResponseEntity<OrganizationResDTO> updateOrg(@PathVariable @NotNull(message = "Organization id is mandatory") UUID orgId, @Valid @RequestBody OrganizationReqDTO dto, Principal principal);
+    ResponseEntity<OrganizationResDTO> updateOrg(
+            @PathVariable @NotNull(message = "Organization id is mandatory") UUID orgId,
+            @Valid @RequestBody OrganizationReqDTO dto,
+            @AuthenticationPrincipal CustomUserDetails principal);
 
     @DeleteMapping("/delete/{orgId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete existing organization. Only available for roles: admin")
-    ResponseEntity<Boolean> deleteOrg(@PathVariable @NotNull(message = "Organization id is mandatory") UUID orgId, Principal principal);
+    ResponseEntity<Boolean> deleteOrg(
+            @PathVariable @NotNull(message = "Organization id is mandatory") UUID orgId,
+            @AuthenticationPrincipal CustomUserDetails principal);
 
 
 

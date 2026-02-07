@@ -6,6 +6,7 @@ import edu.com.bookingsystem.exceptions.UnauthorizedException;
 import edu.com.bookingsystem.mappers.BookingMapper;
 import edu.com.bookingsystem.models.Booking;
 import edu.com.bookingsystem.models.event.Event;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import edu.com.bookingsystem.models.user.UserAccount;
 import edu.com.bookingsystem.repos.BookingRepo;
 import edu.com.bookingsystem.repos.EventRepo;
@@ -48,8 +49,8 @@ public class BookingService {
         return bookingRepo.findByUserAndEvent(userId, eventId);
     }
     //all roles
-    public List<BookingResponseDTO> getList(Principal email) {
-        UserAccount user = getAuthorizedUser(email.getName());
+    public List<BookingResponseDTO> getList(CustomUserDetails email) {
+        UserAccount user = getAuthorizedUser(email.getUsername());
         List<Booking> list = bookingRepo.findAllByUserId(user.getId());
         return list.stream()
                 .map(bookingMapper::toDto)
@@ -67,8 +68,8 @@ public class BookingService {
 
     //only users
     @Transactional
-    public BookingResponseDTO bookEvent(UUID eventId, Principal user) {
-        UserAccount userAccount = getAuthorizedUser(user.getName());
+    public BookingResponseDTO bookEvent(UUID eventId, CustomUserDetails user) {
+        UserAccount userAccount = getAuthorizedUser(user.getUsername());
 
         Event event = eventRepo.findByIdForUpdate(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
 
@@ -93,8 +94,8 @@ public class BookingService {
     }
 
     //only users
-    public BookingResponseDTO unBookEvent(UUID bookingId, Principal user) {
-        UserAccount userAccount = getAuthorizedUser(user.getName());
+    public BookingResponseDTO unBookEvent(UUID bookingId, CustomUserDetails user) {
+        UserAccount userAccount = getAuthorizedUser(user.getUsername());
         Booking booking = bookingRepo.findById(bookingId).orElseThrow(() -> new EntityNotFoundException("Booking not found"));
         if (!booking.isActive()) {
             throw new EntityNotFoundException("Booking is already unbooked");
@@ -116,24 +117,31 @@ public class BookingService {
         return true;
     }
 
-    public List<BookingResponseDTO> getUpcomingBookings(Principal auth) {
-        UserAccount user = getAuthorizedUser(auth.getName());
-        List<Booking> bookings = bookingRepo.findAllUpcomingByUserId(user.getId(), true, LocalDateTime.now());
+    public List<BookingResponseDTO> getUpcomingBookings(CustomUserDetails user) {
+        // 1. DIRECT ACCESS (No casting needed)
+        UUID userId = user.getId();
+        UUID orgId = user.getOrganizationId();
+        String fullName = user.getFullName();
+        String email = user.getUsername();
+
+        System.out.println("User " + fullName + " is from Org " + orgId + userId + email);
+        UserAccount foundUser = getAuthorizedUser(email);
+        List<Booking> bookings = bookingRepo.findAllUpcomingByUserId(foundUser.getId(), true, LocalDateTime.now());
         return bookings.stream()
                 .map(bookingMapper::toDto)
                 .toList();
     }
 
-    public List<BookingResponseDTO> getPastBookings(Principal auth) {
-        UserAccount user = getAuthorizedUser(auth.getName());
+    public List<BookingResponseDTO> getPastBookings(CustomUserDetails auth) {
+        UserAccount user = getAuthorizedUser(auth.getUsername());
         List<Booking> bookings = bookingRepo.findAllPastByUserId(user.getId(), LocalDateTime.now());
         return bookings.stream()
                 .map(bookingMapper::toDto)
                 .toList();
     }
 
-    public BookingResponseDTO getBookingById(UUID bookingId, Principal auth) {
-        UserAccount user = getAuthorizedUser(auth.getName());
+    public BookingResponseDTO getBookingById(UUID bookingId, CustomUserDetails auth) {
+        UserAccount user = getAuthorizedUser(auth.getUsername());
        Booking byId = bookingRepo.findById(bookingId)
                .orElseThrow(() -> new EntityNotFoundException("Booking by given id not found"));
         Booking existingBookingByUser = getExistingBookingByUser(user.getId())

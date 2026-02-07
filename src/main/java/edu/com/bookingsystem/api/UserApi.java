@@ -31,6 +31,7 @@ public interface UserApi {
     @GetMapping("/get/manager/{orgId}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "List of managers by org id. Available for roles: admin")
-    ResponseEntity<List<UserResponseDTO>> getAllManagers(@PathVariable @NotNull(message = "Org id is mandatory") UUID orgId);
+    ResponseEntity<List<UserResponseDTO>> getAllManagers(
+            @PathVariable @NotNull(message = "Org id is mandatory") UUID orgId);
 
 }

@@ -68,7 +68,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
                 .peek(role -> role.setName(role.getName().replaceFirst("ROLE_", "")))
                 .collect(Collectors.toSet());
         user.setRoles(newrole);
-        UserDetails userDetails = CustomUserDetails.builder()
+        CustomUserDetails userDetails = CustomUserDetails.builder()
                 .user(user)
                 .build();
 

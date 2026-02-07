@@ -2,12 +2,14 @@ package edu.com.bookingsystem.api;
 
 
 import edu.com.bookingsystem.dtos.BookingResponseDTO;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,22 +27,22 @@ public interface BookingAPI {
     @GetMapping("/")
     @Operation(summary = "Get own bookings. Available for all user:")
     @PreAuthorize("hasRole('USER')")
-    ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(Principal user);
+    ResponseEntity<List<BookingResponseDTO>> getOwnBookingList(@AuthenticationPrincipal CustomUserDetails user);
 
     @GetMapping("/upcoming")
     @Operation(summary = "Get own upcoming and active bookings. Available for all user:")
     @PreAuthorize("hasRole('USER')")
-    ResponseEntity<List<BookingResponseDTO>> getOwnUpcomingBookings(Principal user);
+    ResponseEntity<List<BookingResponseDTO>> getOwnUpcomingBookings(@AuthenticationPrincipal CustomUserDetails user);
 
     @GetMapping("/past")
     @Operation(summary = "Get own past bookings. Available for all user:")
     @PreAuthorize("hasRole('USER')")
-    ResponseEntity<List<BookingResponseDTO>> getOwnPastBookings(Principal user);
+    ResponseEntity<List<BookingResponseDTO>> getOwnPastBookings(@AuthenticationPrincipal CustomUserDetails user);
 
     @GetMapping("/{bookingId}")
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Get booking by booking id. Available for user")
-    ResponseEntity<BookingResponseDTO> getOwnBookingById(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal user);
+    ResponseEntity<BookingResponseDTO> getOwnBookingById(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, @AuthenticationPrincipal CustomUserDetails user);
 
     @GetMapping("/{eventId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
@@ -50,12 +52,12 @@ public interface BookingAPI {
     @PostMapping("/{eventId}")
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Book the event. Available for users only")
-    ResponseEntity<BookingResponseDTO> bookEvent(@PathVariable @NotNull(message = "Event id is mandatory") UUID eventId, Principal principal);
+    ResponseEntity<BookingResponseDTO> bookEvent(@PathVariable @NotNull(message = "Event id is mandatory") UUID eventId, @AuthenticationPrincipal CustomUserDetails user);
 
     @PutMapping("/unbook/{bookingId}")
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Book the event. Available for users")
-    ResponseEntity<BookingResponseDTO> unBookEvent(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, Principal principal);
+    ResponseEntity<BookingResponseDTO> unBookEvent(@PathVariable @NotNull(message = "Booking id is mandatory") UUID bookingId, @AuthenticationPrincipal CustomUserDetails user);
 
     @DeleteMapping("/delete/{bookingId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")

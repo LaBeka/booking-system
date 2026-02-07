@@ -3,6 +3,7 @@ package edu.com.bookingsystem.api;
 
 import edu.com.bookingsystem.dtos.EventRequestDTO;
 import edu.com.bookingsystem.dtos.EventResponseDTO;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -12,6 +13,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,17 +39,21 @@ public interface EventApi {
     @PostMapping("/create")
     @PreAuthorize("hasRole('MANAGER')")
     @Operation(summary = "Create new event. Only available for roles: admin & manager")
-    ResponseEntity<EventResponseDTO> createEvent(@Valid @RequestBody EventRequestDTO dto, Principal principal);
+    ResponseEntity<EventResponseDTO> createEvent(@Valid @RequestBody EventRequestDTO dto,
+                                                 @AuthenticationPrincipal CustomUserDetails principal);
 
     @PutMapping("/update/{eventId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @Operation(summary = "Update existing event. Only available for roles: admin, manager")
-    ResponseEntity<EventResponseDTO> updateEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId, @Valid @RequestBody EventRequestDTO dto, Principal principal);
+    ResponseEntity<EventResponseDTO> updateEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId,
+                                                 @Valid @RequestBody EventRequestDTO dto,
+                                                 @AuthenticationPrincipal CustomUserDetails principal);
 
     @DeleteMapping("/delete/{eventId}")
     @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     @Operation(summary = "Delete existing event. Only available for roles: admin, manager")
-    ResponseEntity<Boolean> deleteEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId, Principal principal);
+    ResponseEntity<Boolean> deleteEvent(@PathVariable @NotNull(message = "event id is mandatory") UUID eventId,
+                                        @AuthenticationPrincipal CustomUserDetails principal);
 
 
     @GetMapping("/upcoming")
