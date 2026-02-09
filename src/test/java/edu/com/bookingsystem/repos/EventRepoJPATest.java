@@ -14,6 +14,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -95,69 +96,99 @@ class EventRepoJPATest {
     @Test
     @DisplayName("findUpcomingListEventsByLocation should return list of future events from now")
     void findUpcomingListEventsByLocation() {
-        List<Event> result = eventRepo.findUpcomingListEventsByLocation(location, LocalDateTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        List<Event> result = eventRepo.findUpcomingListEventsByLocation(location, now);
 
-        assertThat(result).size().isEqualTo(2);
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting(Event::getWhen)
+                .allMatch(date -> date.isAfter(now), "All events must be in the future");
     }
 
     @Test
     @DisplayName("findPastListEventsByLocation should return list of past events from now")
     void findPastListEventsByLocation() {
-        eventEntity2.setWhen(LocalDateTime.now().minusDays(2));
+        LocalDateTime now = LocalDateTime.now();
+
+        eventEntity2.setWhen(now.minusDays(2));
         eventRepo.save(eventEntity2);
-        eventEntity.setWhen(LocalDateTime.now().minusDays(2));
+        eventEntity.setWhen(now.minusDays(2));
         eventRepo.save(eventEntity);
 
-        List<Event> result = eventRepo.findPastListEventsByLocation(location, LocalDateTime.now());
-        assertThat(result).size().isEqualTo(2);
-        assertThat(result.size()).isEqualTo(2);
+        List<Event> result = eventRepo.findPastListEventsByLocation(location, now);
+        assertThat(result).hasSize(2);
+
+        assertThat(result).extracting(Event::getWhen)
+                .allMatch(date -> date.isBefore(now), "All events must be in the future");
     }
 
     @Test
     @DisplayName("findUpcomingListEventsByOrganization should return list of future events from now of one organization")
     void findUpcomingListEventsByOrganization() {
-        List<Event> result = eventRepo.findUpcomingListEventsByOrganization(org.getId(), LocalDateTime.now());
-        assertThat(result).size().isEqualTo(2);
-        assertThat(result.size()).isEqualTo(2);
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Event> result = eventRepo.findUpcomingListEventsByOrganization(org.getId(), now);
+        assertThat(result).hasSize(2);
+        assertThat(result).extracting(Event::getWhen)
+                .allMatch(date -> date.isAfter(now), "All events must be in the future");
     }
     @Test
     @DisplayName("findUpcomingListEventsByOrganization should fail return list of future events from now of one organization")
     void findUpcomingListEventsByOrganization_failed() {
+        LocalDateTime now = LocalDateTime.now();
+
         org = orgRepo.save(Organization.builder().id(UUID.randomUUID()).build());
 
-        List<Event> result = eventRepo.findUpcomingListEventsByOrganization(org.getId(), LocalDateTime.now());
+        List<Event> result = eventRepo.findUpcomingListEventsByOrganization(org.getId(), now);
         assertNotEquals(2, result.size());
+        assertThat(result).extracting(Event::getWhen)
+                .allMatch(date -> date.isBefore(now), "should fail because all events must be in the future");
     }
 
     @Test
     @DisplayName("findPastListEventsByOrganization should return list of past events from now of one organization")
     void findPastListEventsByOrganization() {
-        eventEntity2.setWhen(LocalDateTime.now().minusDays(2));
+        LocalDateTime now = LocalDateTime.now();
+
+        eventEntity2.setWhen(now.minusDays(2));
         eventRepo.save(eventEntity2);
-        eventEntity.setWhen(LocalDateTime.now().minusDays(2));
+        eventEntity.setWhen(now.minusDays(2));
         eventRepo.save(eventEntity);
 
         List<Event> result = eventRepo.findPastListEventsByOrganization(
                 org.getId(),
-                LocalDateTime.now()
+                now
         );
         assertThat(result).size().isEqualTo(2);
-        assertThat(result.size()).isEqualTo(2);
+        assertThat(result).extracting(Event::getWhen)
+                .allMatch(date ->
+                        date.isBefore(now), "all events must be in the past");
     }
 
     @Test
     @DisplayName("findPastListEventsByOrganization should fail return list of future events from now of one organization")
     void findPastListEventsByOrganization_failed() {
-        eventEntity2.setWhen(LocalDateTime.now().minusDays(2));
+        LocalDateTime now = LocalDateTime.now();
+
+        eventEntity2.setWhen(now.minusDays(2));
         eventRepo.save(eventEntity2);
-        eventEntity.setWhen(LocalDateTime.now().minusDays(2));
+        eventEntity.setWhen(now.minusDays(2));
         eventRepo.save(eventEntity);
         org = orgRepo.save(Organization.builder().id(UUID.randomUUID()).build());
 
-        List<Event> result = eventRepo.findPastListEventsByOrganization(org.getId(), LocalDateTime.now());
+        List<Event> result = eventRepo.findPastListEventsByOrganization(org.getId(), now);
         assertNotEquals(2, result.size());
+        assertThat(result).extracting(Event::getWhen)
+                .allMatch(date ->
+                        date.isBefore(now), "should fail because all events must be in the past");
     }
 
+    @Test
+    @DisplayName("findByIdForUpdate should find event and apply lock")
+    void findByIdForUpdate() {
+        Optional<Event> result = eventRepo.findByIdForUpdate(eventEntity.getId());
+
+        assertTrue(result.isPresent());
+        assertEquals(eventEntity.getId(), result.get().getId());
+    }
 
 }
