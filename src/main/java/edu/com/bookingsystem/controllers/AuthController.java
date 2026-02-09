@@ -42,20 +42,20 @@ public class AuthController implements AuthApi {
     private final JwtTokenRepo  jwtTokenRepo;
 
     @Override
-    public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO userRequestDTO, Principal principal) {
-        return ResponseEntity.ok(userService.createNewUserLocale(userRequestDTO, principal.getName()));
+    public ResponseEntity<UserResponseDTO> createUser(UserRequestDTO userRequestDTO, CustomUserDetails principal) {
+        return ResponseEntity.ok(userService.createNewUserLocale(userRequestDTO, principal.getUsername()));
 
     }
 
     @Override
-    public ResponseEntity<UserResponseDTO> registerAdmin(String email, UUID orgId, Principal principal) {
-        return ResponseEntity.ok(userService.registerAdmin(email, orgId, List.of("SUPER_ADMIN", "ADMIN"), principal.getName()));
+    public ResponseEntity<UserResponseDTO> registerAdmin(String email, CustomUserDetails principal) {
+        return ResponseEntity.ok(userService.registerAdmin(email, principal.getOrganizationId(), List.of("SUPER_ADMIN", "ADMIN"), principal.getUsername()));
 
     }
 
     @Override
-    public ResponseEntity<UserResponseDTO> registerManager(String email, UUID orgId, Principal principal) {
-        return ResponseEntity.ok(userService.registerManager(email, orgId, List.of("MANAGER"), principal.getName()));
+    public ResponseEntity<UserResponseDTO> registerManager(String email, CustomUserDetails principal) {
+        return ResponseEntity.ok(userService.registerManager(email, principal.getOrganizationId(), List.of("MANAGER"), principal.getUsername()));
     }
 
     //only for non-oauth2 login works

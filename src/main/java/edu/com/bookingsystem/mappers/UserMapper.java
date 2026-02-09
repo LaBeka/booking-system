@@ -20,7 +20,7 @@ public interface UserMapper {
     UserAccount toEntity(UserRequestDTO dto,
                   @Context PasswordEncoder encoder);
 
-    @Mapping(target = "roles", expression = "java(entity.getRoles().stream().map(Role::getName).collect(java.util.stream.Collectors.toSet()))")
+    //@Mapping(target = "roles", expression = "java(entity.getRoles().stream().map(Role::getName).collect(java.util.stream.Collectors.toSet()))")
     @Mapping(target = "org", source = "organization")
     UserResponseDTO toResponseDTO(UserAccount entity);
 }

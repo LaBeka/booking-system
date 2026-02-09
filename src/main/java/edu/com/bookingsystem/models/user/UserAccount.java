@@ -1,5 +1,6 @@
 package edu.com.bookingsystem.models.user;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.com.bookingsystem.models.Booking;
 import edu.com.bookingsystem.models.Organization;
 import jakarta.persistence.*;
@@ -58,5 +59,6 @@ public class UserAccount {
 
     @ManyToOne
     @JoinColumn(name = "org_id")
+    @JsonManagedReference
     private Organization organization;
 }

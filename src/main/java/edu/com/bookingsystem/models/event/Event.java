@@ -1,6 +1,8 @@
 package edu.com.bookingsystem.models.event;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.com.bookingsystem.models.Booking;
 import edu.com.bookingsystem.models.Organization;
 import edu.com.bookingsystem.models.user.UserAccount;
@@ -63,6 +65,7 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "org_id", nullable = false)
+    @JsonManagedReference
     private Organization organization;
 
     @Override

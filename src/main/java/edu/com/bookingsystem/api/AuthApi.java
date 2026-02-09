@@ -2,11 +2,13 @@ package edu.com.bookingsystem.api;
 
 import edu.com.bookingsystem.dtos.user.UserRequestDTO;
 import edu.com.bookingsystem.dtos.user.UserResponseDTO;
+import edu.com.bookingsystem.models.user.CustomUserDetails;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,23 +28,21 @@ public interface AuthApi {
     @Operation(summary = "Create new user with LOCALE.PROVIDER. With default role 'USER'")
     ResponseEntity<UserResponseDTO> createUser(
             @Valid @RequestBody UserRequestDTO userRequestDTO,
-            Principal principal);
+            @AuthenticationPrincipal CustomUserDetails principal);
 
     @PostMapping("/changeUserTo/admin")
     @Operation(summary = "Change existing user's 'USER' role to 'ADMIN'")
     @PreAuthorize("hasRole('USER')")
     ResponseEntity<UserResponseDTO> registerAdmin(
             @NotNull(message = "Email of the user is mandatory") @RequestParam String email,
-            @NotNull(message = "ID of organization of the user is mandatory") @RequestParam UUID orgId,
-            Principal principal);
+            @AuthenticationPrincipal CustomUserDetails principal);
 
     @PostMapping("/changeUserTo/manager")
     @Operation(summary = "Change existing user's 'USER' role to 'MANAGER'")
     @PreAuthorize("hasRole('USER')")
     ResponseEntity<UserResponseDTO> registerManager(
             @NotNull(message = "Email of the user is mandatory") @RequestParam String email,
-            @NotNull(message = "ID of organization of the user is mandatory") @RequestParam UUID orgId,
-            Principal principal);
+            @AuthenticationPrincipal CustomUserDetails principal);
 
     @PostMapping("/login")
     @Operation(summary = "Create token for authentication to log in. ONLY FOR NON-GOOGLE LOGIN. NO ROLE REQUIRED")

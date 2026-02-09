@@ -1,5 +1,7 @@
 package edu.com.bookingsystem.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import edu.com.bookingsystem.models.event.Event;
 import edu.com.bookingsystem.models.user.UserAccount;
 import jakarta.persistence.*;
@@ -38,8 +40,10 @@ public class Organization {
     private String email;
 
     @OneToMany(mappedBy = "organization")
+    @JsonBackReference
     private List<UserAccount> managers;
 
     @OneToMany(mappedBy = "organization")
+    @JsonManagedReference
     private List<Event> events;
 }
